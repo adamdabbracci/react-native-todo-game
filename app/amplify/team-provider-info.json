@@ -1,0 +1,20 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-gamify-life-dev-201302-authRole",
+            "UnauthRoleArn": "arn:aws:iam::699483531180:role/amplify-gamify-life-dev-201302-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::699483531180:role/amplify-gamify-life-dev-201302-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "amplify-gamify-life-dev-201302-deployment",
+            "UnauthRoleName": "amplify-gamify-life-dev-201302-unauthRole",
+            "StackName": "amplify-gamify-life-dev-201302",
+            "StackId": "arn:aws:cloudformation:us-east-1:699483531180:stack/amplify-gamify-life-dev-201302/864b7e50-8ff7-11ea-9467-0e403b617781",
+            "AmplifyAppId": "d3815ir9ex6ltr"
+        },
+        "categories": {
+            "auth": {
+                "gamifylife8e3ecc66": {}
+            }
+        }
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "paths": [],
+    "resourceName": "gamifyLifeApi",
+    "apiName": "gamifyLifeApi",
+    "functionArns": [],
+    "privacy": {
+        "auth": 1,
+        "unauth": 0,
+        "authRoleName": "amplify-gamify-life-dev-201302-authRole",
+        "unAuthRoleName": "amplify-gamify-life-dev-201302-unauthRole"
+    },
+    "dependsOn": [],
+    "uuid": "c13b8171"
+}
