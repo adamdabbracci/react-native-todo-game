@@ -31,7 +31,7 @@ function BottyMessage({targetMessage}){
         const newMessage = message + targetMessage[message.length];
         setTimeout(() => {
           setMessage(newMessage);
-        }, 50);
+        }, 10);
       }
 
     return (
@@ -70,7 +70,7 @@ function BottyMessage({targetMessage}){
            backgroundColor: "purple",
            borderRadius: 30
        }}>
-         <BottyMessage targetMessage={`Whaddup girl! This is your home-bot Botty. You have ${bank.coins} coins and ${bank.tickets} tickets. `}></BottyMessage>
+         <BottyMessage targetMessage={`Whaddup girl! This is your home-bot Botty. You have ${bank.coins} coins and ${bank.tickets} tickets. Get through your tasks for today and I'll throw in 50 extra coins!`}></BottyMessage>
         
        </View>
     </View>

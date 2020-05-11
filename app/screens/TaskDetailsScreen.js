@@ -10,15 +10,17 @@ const taskService = new TaskService();
 
 export default function TaskDetailsScreen(props) {
 
-    function completeTask() {
+    async function completeTask() {
         const bank = currentUserService.addBank({
             coins: props.task.coin_reward,
             tickets: props.task.ticket_reward,
         })
 
+       await taskService.completeTask(props.task);
+
        alert("Congratulations! You now have " + bank.coins + " coins and " + bank.tickets + " tickets.");
 
-       taskService.removeTask(props.task.id);
+       
     }
 
     return (

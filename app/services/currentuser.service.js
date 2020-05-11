@@ -28,8 +28,8 @@ export default class CurrentUserService {
 
     addBank = (addBank) => {
         const bank = {
-           coins: _bank.coins + addBank.coins,
-           tickets: _bank.tickets + addBank.tickets,
+           coins: parseInt(_bank.coins) + parseInt(addBank.coins),
+           tickets: parseInt(_bank.tickets) + parseInt(addBank.tickets),
         }
 
         _bank = bank;

@@ -1,6 +1,6 @@
 import * as WebBrowser from 'expo-web-browser';
 import * as React from 'react';
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, FlatList } from 'react-native';
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, FlatList, RefreshControl } from 'react-native';
 import { Button, Overlay } from 'react-native-elements';
 
 import Amplify, { API } from 'aws-amplify';
@@ -23,6 +23,7 @@ export default function HomeScreen() {
     showTaskDetail: false,
     taskDetails: null,
   });
+  const [refreshing, setRefreshing] = React.useState(false);
 
   async function fetchData() {
     console.log("Current: " + tasks.length + ", fetching.");
@@ -44,6 +45,17 @@ export default function HomeScreen() {
     }
   })
 
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    fetchData()
+    .then(() => setRefreshing(false))
+    .catch(() =>{
+      setRefreshing(false)
+    })
+  }, [refreshing]);
+
+
   function showTaskDetail(task) {
     console.log("Showing task details:")
     console.log(task);
@@ -64,7 +76,9 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         {
           tasks.map((l, i) => (
             <ListItem
@@ -75,7 +89,8 @@ export default function HomeScreen() {
                 showTaskDetail(l)
               }}
               bottomDivider
-
+              checkmark={l.completed}
+              disabled={l.completed}
               badge={{
                 value: `${l.coin_reward} / ${l.ticket_reward}`,
                 badgeStyle: {

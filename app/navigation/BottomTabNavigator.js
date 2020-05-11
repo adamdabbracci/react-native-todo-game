@@ -4,6 +4,8 @@ import * as React from 'react';
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import LinksScreen from '../screens/LinksScreen';
+import { Button } from 'react-native-elements';
+import CreateTaskScreen from '../screens/CreateTaskScreen';
 
 const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = 'Home';
@@ -22,6 +24,21 @@ export default function BottomTabNavigator({ navigation, route }) {
         options={{
           title: 'My Tasks',
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-code-working" />,
+          headerRight: () => (
+            <Button
+              onPress={() => alert('This is a button!')}
+              title="Info"
+              color="black"
+            />
+          ),
+        }}
+      />
+      <BottomTab.Screen
+        name="CreateTask"
+        component={CreateTaskScreen}
+        options={{
+          title: 'Create Task',
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-add" />,
         }}
       />
       <BottomTab.Screen
@@ -44,6 +61,8 @@ function getHeaderTitle(route) {
       return 'My Tasks';
     case 'Account':
       return 'Account Details';
+    case 'CreateTask':
+      return 'Create New Task';
     default:
       return 'Hello!'
   }
