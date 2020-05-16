@@ -63,8 +63,8 @@ export default function TaskDetailsScreen(props) {
                 flexDirection: "row"
             }}>
                 <Icon
-                    name='assignment-turned-in'
-                    type='material'
+                    name='ticket'
+                    type='font-awesome'
                     color="gold"
                     style={{
                         marginRight: 10,

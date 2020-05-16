@@ -31,6 +31,8 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+  authorizer:
+    arn: arn:aws:cognito-idp:us-east-1:332697329009:userpool/us-east-1_1905bQzmO
 
 functions:
   create:

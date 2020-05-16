@@ -56,7 +56,9 @@ module.exports.update = (event, context, callback) => {
   });
 };
 
-
+/**
+ * Mark as task as complete
+ */
 module.exports.complete = (event, context, callback) => {
   const timestamp = new Date().getTime();
   const data = JSON.parse(event.body);

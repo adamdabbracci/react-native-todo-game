@@ -1,8 +1,7 @@
 import * as WebBrowser from 'expo-web-browser';
 import * as React from 'react';
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, FlatList, RefreshControl } from 'react-native';
-import { Button, Overlay } from 'react-native-elements';
-
+import { Button, Overlay, Icon } from 'react-native-elements';
 import Amplify, { API } from 'aws-amplify';
 import awsconfig from '../aws-exports';
 import TaskService from '../services/task.service';
@@ -10,6 +9,7 @@ import { ListItem } from 'react-native-elements'
 import { ScrollView } from 'react-native-gesture-handler';
 import TaskDetailsScreen from './TaskDetailsScreen';
 import BottyChatComponent from '../components/BottyChatComponent';
+import BankTopDisplayComponent from '../components/BankTopDisplay';
 
 Amplify.configure(awsconfig);
 
@@ -31,6 +31,9 @@ export default function HomeScreen() {
     taskService.getAll()
       .then((response) => {
         console.log("Loaded "+response.length+" tasks.")
+        response = response.sort((a,b) => {
+          return (a.completed) ? 1 : -1
+        })
         setTasks(response)
       })
       .catch((ex) => {
@@ -55,6 +58,25 @@ export default function HomeScreen() {
     })
   }, [refreshing]);
 
+  const buildRewardDetailElement = (coincount) => {
+    return (
+      <View style={{
+        alignContent: "center",
+        alignItems:"center"
+      }}>
+        <Icon
+          name="toll"
+          color="white"
+        ></Icon>
+        <Text style={{
+          color: "white",
+          fontWeight: "900",
+          fontSize: 20
+        }}>{coincount || 0}</Text>
+      </View>
+    )
+  }
+
 
   function showTaskDetail(task) {
     console.log("Showing task details:")
@@ -76,26 +98,59 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      {/* <BottyChatComponent
+        
+        style={{
+          position: "absolute",
+          top: 0
+        }}></BottyChatComponent>
+         */}
+
+      <BankTopDisplayComponent></BankTopDisplayComponent>
+
       <ScrollView refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }>
+        }
+        style={{
+          backgroundColor: "gold"
+        }}
+        >
         {
           tasks.map((l, i) => (
             <ListItem
               key={i}
               title={l.name}
+              subtitle={l.description}
               onPress={() => {
-                console.log("press")
-                showTaskDetail(l)
-              }}
-              bottomDivider
-              checkmark={l.completed}
-              disabled={l.completed}
-              badge={{
-                value: `${l.coin_reward} / ${l.ticket_reward}`,
-                badgeStyle: {
+                if (l.completed) {
+                  alert("You've already completed this task!")
+                }
+                else {
+                  showTaskDetail(l)
                 }
               }}
+              leftElement={buildRewardDetailElement(l.coin_reward)}
+              containerStyle={{
+                backgroundColor: "gold",
+              }}
+              titleStyle={{
+                color: "white",
+                fontSize: 24,
+                fontWeight: "bold"
+              }}
+              subtitleStyle={{
+                color: "white",
+                fontSize: 18,
+                fontWeight: "bold"
+              }}
+              rightElement={() => {
+                if (l.completed) {
+                  return (
+                    <Icon name="check" type="font-awesome-5" color="white"></Icon>
+                  )
+                }
+              }}
+              
             />
           ))
         }
@@ -106,13 +161,7 @@ export default function HomeScreen() {
       }}>
         <TaskDetailsScreen task={taskDetail.taskDetails} ></TaskDetailsScreen>
       </Overlay>
-      <BottyChatComponent
-
-
-        style={{
-          position: "absolute",
-          top: 0
-        }}></BottyChatComponent>
+      
 
     </View>
   )

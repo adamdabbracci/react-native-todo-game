@@ -5,10 +5,6 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: '#fff',
     },
-
-    primarybutton: {
-      color: "blue"
-    }
   });
 
   export default styles;

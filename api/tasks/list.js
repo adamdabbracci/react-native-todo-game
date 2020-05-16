@@ -3,9 +3,19 @@
 const dynamodb = require('./dynamodb');
 
 module.exports.list = (event, context, callback) => {
+  const userId = event.requestContext.authorizer.claims.sub;
+
   const params = {
     TableName: process.env.DYNAMODB_TABLE,
+    ExpressionAttributeValues: {
+      ":userId": {
+        S: userId
+       }
+     }, 
+     FilterExpression: "assigned_to = :userId", 
   };
+
+  console.log(params)
 
   // fetch all tasks from the database
   dynamodb.scan(params, (error, result) => {

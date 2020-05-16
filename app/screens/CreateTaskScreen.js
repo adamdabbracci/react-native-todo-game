@@ -54,18 +54,7 @@ export default function CreateTaskScreen() {
             onChangeText={value => updateForm("coin_reward", value)}
             leftIcon={{ type: 'material', name: 'toll' }}
             />
-            <Input
-            containerStyle={{
-                flex: .5
-            }}
-            keyboardType="number-pad"
-            placeholder='Ticket Reward'
-            onChangeText={value => updateForm("ticket_reward", value)}
-            leftIcon={{ 
-                name:'assignment-turned-in',
-                type:'material'
-             }}
-            />
+
     </View>
 
     <View >
@@ -73,6 +62,9 @@ export default function CreateTaskScreen() {
         <Button
         title="Create"
         raised
+        buttonStyle={{
+          backgroundColor: "gold"
+        }}
         onPress={submitForm}
         />
     </View>
@@ -86,7 +78,7 @@ export default function CreateTaskScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fafafa',
+    backgroundColor: 'gold',
     padding: 10
   },
   contentContainer: {

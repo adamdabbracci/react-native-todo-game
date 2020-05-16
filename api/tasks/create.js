@@ -4,6 +4,11 @@ const uuid = require('uuid');
 const dynamodb = require('./dynamodb');
 
 module.exports.create = (event, context, callback) => {
+
+  console.log(event.requestContext.authorizer)
+  const userId = event.requestContext.authorizer.claims.sub;
+
+
   const timestamp = new Date().getTime();
   const data = JSON.parse(event.body);
   
@@ -12,8 +17,9 @@ module.exports.create = (event, context, callback) => {
     Item: {
       id: uuid.v1(),
       name: data.name,
+      assigned_to: userId,
+      assigned_by: userId,
       description: data.description,
-      ticket_reward: data.ticket_reward,
       coin_reward: data.coin_reward,
       completed: false,
       createdAt: timestamp,

@@ -8,6 +8,7 @@ let _bank = {
 
 export default class CurrentUserService {
 
+
     getUserDetails = async () => {
         try {
             const user = await Auth.currentAuthenticatedUser();
@@ -19,6 +20,12 @@ export default class CurrentUserService {
             console.log(ex);
             return null
         }
+    }
+
+    getAccessToken = async () => {
+        const session = await Auth.currentSession();
+        return session.getAccessToken().getJwtToken();
+          
     }
 
     getUserBank = () => {

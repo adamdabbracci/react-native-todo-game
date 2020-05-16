@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View, SafeAreaView } from 'react-native';
 import { SplashScreen } from 'expo';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,12 +13,13 @@ import useLinking from './navigation/useLinking';
 import Amplify, { Auth, PubSub, API } from 'aws-amplify';
 import { AWSIoTProvider } from '@aws-amplify/pubsub/lib/Providers';
 import awsconfig from './aws-exports';
+import { Icon, Button } from 'react-native-elements';
 Amplify.configure(awsconfig);
 
 
 const Stack = createStackNavigator();
 
-function App(props) {
+function App(props){
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
   const [initialNavigationState, setInitialNavigationState] = React.useState();
   const containerRef = React.useRef();
@@ -54,14 +55,43 @@ function App(props) {
     return null;
   } else {
     return (
-      <View style={styles.container}>
+      
+      <SafeAreaView style={styles.container}>
+       <View style={{
+            position: 'absolute',                                          
+            top: 15,                                                    
+            right: 15,
+            width: 50,
+            height: 50,
+            zIndex: 2,
+          }}>
+         <Icon                              
+          name='plus'
+          type="font-awesome"
+          raised={true}      
+          color="navy"
+
+        />  
+      </View>
         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-        <NavigationContainer ref={containerRef} initialState={initialNavigationState}>
-          <Stack.Navigator>
+        <NavigationContainer ref={containerRef} initialState={initialNavigationState} theme={{
+          colors: {
+            background: "transparent",
+            border: "transparent",
+          },
+          dark: true
+        }}>
+          <Stack.Navigator screenOptions={
+            {
+              headerShown: false,
+              
+            }
+          }>
             <Stack.Screen name="Root" component={BottomTabNavigator} />
           </Stack.Navigator>
         </NavigationContainer>
-      </View>
+
+      </SafeAreaView>
     );
   }
 }
@@ -69,9 +99,9 @@ function App(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'gold',
   },
 });
 
 
-export default App;
+export default withAuthenticator(App);

@@ -16,6 +16,8 @@ export default function BottyChatComponent(props) {
 
   const [message, setMessage] = React.useState("");
 
+  
+
 function BottyMessage({targetMessage}){
     
     // try {
@@ -50,7 +52,9 @@ function BottyMessage({targetMessage}){
     <View style={{
         flexDirection: "row",
         padding: 10,
-        backgroundColor: "#aaa"
+        borderBottomWidth: 10,
+        borderBottomColor: "#aaaaaa",
+        
 
     }}>
          <Image
@@ -70,7 +74,7 @@ function BottyMessage({targetMessage}){
            backgroundColor: "purple",
            borderRadius: 30
        }}>
-         <BottyMessage targetMessage={`Whaddup girl! This is your home-bot Botty. You have ${bank.coins} coins and ${bank.tickets} tickets. Get through your tasks for today and I'll throw in 50 extra coins!`}></BottyMessage>
+         <BottyMessage targetMessage={`Whaddup girl! This is your home-bot Botty. You have ${bank.coins} coins and ${bank.tickets} tickets.`}></BottyMessage>
         
        </View>
     </View>
