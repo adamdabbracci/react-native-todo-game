@@ -22,6 +22,7 @@ provider:
   runtime: nodejs12.x
   environment:
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+    USERS_TABLE: ${self:service}-users-${opt:stage, self:provider.stage}
     API_HOST: http://6a8c2d6f.ngrok.io
   iamRoleStatements:
     - Effect: Allow
@@ -40,7 +41,7 @@ functions:
 
   # TASKS {need to rename them}
   create:
-    handler: api/tasks/create.create
+    handler: functions/tasks/create.create
     events:
       - http:
           path: tasks
@@ -48,7 +49,7 @@ functions:
           cors: true
 
   list:
-    handler: api/tasks/list.list
+    handler: functions/tasks/list.list
     events:
       - http:
           path: tasks
@@ -56,7 +57,7 @@ functions:
           cors: true
 
   get:
-    handler: api/tasks/get.get
+    handler: functions/tasks/get.get
     events:
       - http:
           path: tasks/{id}
@@ -64,22 +65,22 @@ functions:
           cors: true
 
   update:
-    handler: api/tasks/update.update
+    handler: functions/tasks/update.update
     events:
       - http:
           path: tasks/{id}
           method: put
           cors: true
   complete:
-    handler: api/tasks/update.complete
+    handler: functions/tasks/update.complete
     events:
       - http:
-          path: tasks/{taskId}/complete
+          path: tasks/{id}/complete
           method: put
           cors: true
 
   delete:
-    handler: api/tasks/delete.delete
+    handler: functions/tasks/delete.delete
     events:
       - http:
           path: tasks/{id}
@@ -89,7 +90,7 @@ functions:
 
   # /users
   getAssignableUsers:
-    handler: api/users.getAssignableUsers
+    handler: functions/users.getAssignableUsers
     environment:
       COGNITO_POOL_ID: ${self:custom.cognitoPoolId}
     events:
@@ -98,6 +99,14 @@ functions:
           method: get
           cors: true
 
+  # account
+  getAccount:
+    handler: functions/account.getAccount
+    events:
+      - http:
+          path: account
+          method: get
+          cors: true
 resources:
   Resources:
     tasksDynamoDbTable:
@@ -114,3 +123,17 @@ resources:
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.DYNAMODB_TABLE}
+    usersTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.USERS_TABLE}

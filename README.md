@@ -6,5 +6,10 @@ https://docs.expo.io
 expo install
 npm install
 
-## Run
-expo start
+## Run the app
+`expo start` from within the `/app` directory
+
+## Run the API locally
+1. Install nGrok
+2. Update the app services file to point to your pulic nGrok URL
+3. Run `sls offline start --stage dev`

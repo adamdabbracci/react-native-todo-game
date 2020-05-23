@@ -16,7 +16,6 @@ import { Icon, Button } from 'react-native-elements';
 
 Amplify.configure(awsconfig);
 
-
 const Stack = createStackNavigator();
 
 function App(props){

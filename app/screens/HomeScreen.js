@@ -12,15 +12,19 @@ import BottyChatComponent from '../components/BottyChatComponent';
 import BankTopDisplayComponent from '../components/BankTopDisplay';
 import CreateTaskScreen from './CreateTaskScreen';
 import HapticService from '../services/haptic.service';
+import Bank from '../services/bank.model';
+import CurrentUserService from '../services/currentuser.service';
 
 Amplify.configure(awsconfig);
 
 const taskService = new TaskService();
 const hapticService = new HapticService();
+const currentUserService = new CurrentUserService();
 
 
 export default function HomeScreen({navigation}) {
   const [tasks, setTasks] = React.useState([]);
+  const [bank, setBank] = React.useState(new Bank());
   const [hasFetched, setHasFetch] = React.useState(false);
   const [taskDetail, setTaskDetail] = React.useState({
     showTaskDetail: false,
@@ -30,18 +34,35 @@ export default function HomeScreen({navigation}) {
   const [createTaskOverlayVisible, setCreateTaskOverlayVisible] = React.useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
 
-  async function fetchData() {
-    console.log("Current: " + tasks.length + ", fetching.");
+  async function fetchBank() {
+    currentUserService.getAccount()
+    .then((account) => {
+      console.log("Updating bank...");
+      console.log(account);
+      setBank({
+        coins: account.coins,
+        tickets: account.tickets,
+      });
+    });
+  }
 
+  async function fetchData() {
+
+    // Refresh the bank
+    fetchBank();
+    
+    // Load the tasks
     taskService.getAll()
       .then((response) => {
         if (response && response.sort) {
-          console.log("Loaded "+response.length+" tasks.")
 
           const sortedResponse = response.sort((a,b) => {
             return (a.completed) ? 1 : -1
           })
-          setTasks(sortedResponse)
+
+          setTasks(sortedResponse);
+
+          
         }
         else {
           alert("Failed to retrive tasks.")
@@ -52,18 +73,22 @@ export default function HomeScreen({navigation}) {
       });
   }
 
+ 
+
   React.useEffect(() => {
     if (!hasFetched) {
       fetchData();
       setHasFetch(true);
     }
-  })
+  }, [])
 
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     fetchData()
-    .then(() => setRefreshing(false))
+    .then(() => {
+      setRefreshing(false);
+    })
     .catch(() =>{
       setRefreshing(false)
     })
@@ -91,8 +116,6 @@ export default function HomeScreen({navigation}) {
 
 
   function showTaskDetail(task) {
-    console.log("Showing task details:")
-    console.log(task);
     setTaskDetail({
       taskDetails: task,
       showTaskDetail: true,
@@ -106,7 +129,6 @@ export default function HomeScreen({navigation}) {
       showTaskDetail: false,
     });
     setCreateTaskOverlayVisible(false);
-    fetchData();
   }
 
   return (
@@ -137,7 +159,7 @@ export default function HomeScreen({navigation}) {
         }}></BottyChatComponent>
          */}
 
-      <BankTopDisplayComponent></BankTopDisplayComponent>
+      <BankTopDisplayComponent bank={bank}></BankTopDisplayComponent>
 
       <ScrollView refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -166,12 +188,12 @@ export default function HomeScreen({navigation}) {
               }}
               titleStyle={{
                 color: "white",
-                fontSize: 24,
-                fontWeight: "bold"
+                fontSize: 20,
+                fontWeight: "bold",
               }}
               subtitleStyle={{
                 color: "white",
-                fontSize: 18,
+                fontSize: 14,
                 fontWeight: "bold"
               }}
               rightElement={() => {
@@ -203,6 +225,7 @@ export default function HomeScreen({navigation}) {
           <TaskDetailsScreen task={taskDetail.taskDetails} onTaskCompleted={() => {
             hapticService.quickVibrate();
             closeTaskOverlay();
+            fetchData();
           }}></TaskDetailsScreen>
         </View>
         

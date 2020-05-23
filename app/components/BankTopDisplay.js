@@ -5,14 +5,22 @@ import CurrentUserService from '../services/currentuser.service';
 import Bank from '../services/bank.model';
 
 
-export default function BankTopDisplayComponent() {
+export default function BankTopDisplayComponent(props) {
 
-    const currentUserService = new CurrentUserService();
-    const bank = currentUserService.getUserBank();
+    // const currentUserService = new CurrentUserService();
+    // const [bank, setBank] = React.useState({
+    //   coins: 0,
+    //   tickets: 0,
+    // })
 
-    React.useEffect(() => {
+    // React.useEffect(() => {
+    //   currentUserService.getUserBank()
+    //   .then((bank) => {
+    //     setBank(bank);
+    //   })
+    // }, []);
 
-    })
+    console.log(props.bank)
 
 
     return (
@@ -40,7 +48,7 @@ export default function BankTopDisplayComponent() {
                 fontWeight: "bold", 
                 fontSize: 30,
                 textAlign: "center",
-                }}>{bank.coins} coins</Text>
+                }}>{props.bank.coins} coins</Text>
     
             </View>
     
@@ -65,7 +73,7 @@ export default function BankTopDisplayComponent() {
                 fontWeight: "bold", 
                 fontSize: 30,
                 textAlign: "center",
-                }}>{bank.tickets} Tickets</Text>
+                }}>{props.bank.tickets} Tickets</Text>
     
             </View>
           </View>

@@ -12,7 +12,7 @@ const taskService = new TaskService();
 const stateDefault = {
     name: "",
     description: "",
-    coin_reward: 20,
+    coin_reward: "",
     assignees: {},
 }
 

@@ -15,13 +15,7 @@ export default function TaskDetailsScreen(props) {
 
     async function completeTask() {
         setProcessing(true);
-        const bank = currentUserService.addBank({
-            coins: props.task.coin_reward,
-            tickets: 0,
-        })
-
        await taskService.completeTask(props.task);
-
        
        setProcessing(false);
        props.onTaskCompleted()
