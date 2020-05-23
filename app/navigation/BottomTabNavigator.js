@@ -6,6 +6,7 @@ import HomeScreen from '../screens/HomeScreen';
 import ProgressScreen from '../screens/ProgressScreen';
 import { Button } from 'react-native-elements';
 import CreateTaskScreen from '../screens/CreateTaskScreen';
+import AccountScreen from '../screens/AccountScreen';
 
 const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = 'HomeScreen';
@@ -34,12 +35,20 @@ export default function BottomTabNavigator({ navigation, route }) {
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
         }}
       />
-      <BottomTab.Screen
-        name="CreateTask"
+      {/* <BottomTab.Screen
+        name="CreateTaskScreen"
         component={CreateTaskScreen}
         options={{
           title: 'Create Task',
-          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-add" />,
+          tabBarVisible: false
+        }}
+      /> */}
+      <BottomTab.Screen
+        name="AccountScreen"
+        component={AccountScreen}
+        options={{
+          title: 'Account',
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-log-in" />,
         }}
       />
     </BottomTab.Navigator>

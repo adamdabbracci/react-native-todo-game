@@ -10,19 +10,24 @@ import { ScrollView } from 'react-native-gesture-handler';
 import TaskDetailsScreen from './TaskDetailsScreen';
 import BottyChatComponent from '../components/BottyChatComponent';
 import BankTopDisplayComponent from '../components/BankTopDisplay';
+import CreateTaskScreen from './CreateTaskScreen';
+import HapticService from '../services/haptic.service';
 
 Amplify.configure(awsconfig);
 
 const taskService = new TaskService();
+const hapticService = new HapticService();
 
 
-export default function HomeScreen() {
+export default function HomeScreen({navigation}) {
   const [tasks, setTasks] = React.useState([]);
   const [hasFetched, setHasFetch] = React.useState(false);
   const [taskDetail, setTaskDetail] = React.useState({
     showTaskDetail: false,
     taskDetails: null,
   });
+
+  const [createTaskOverlayVisible, setCreateTaskOverlayVisible] = React.useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
 
   async function fetchData() {
@@ -30,11 +35,17 @@ export default function HomeScreen() {
 
     taskService.getAll()
       .then((response) => {
-        console.log("Loaded "+response.length+" tasks.")
-        response = response.sort((a,b) => {
-          return (a.completed) ? 1 : -1
-        })
-        setTasks(response)
+        if (response && response.sort) {
+          console.log("Loaded "+response.length+" tasks.")
+
+          const sortedResponse = response.sort((a,b) => {
+            return (a.completed) ? 1 : -1
+          })
+          setTasks(sortedResponse)
+        }
+        else {
+          alert("Failed to retrive tasks.")
+        }
       })
       .catch((ex) => {
         console.log(ex)
@@ -62,7 +73,8 @@ export default function HomeScreen() {
     return (
       <View style={{
         alignContent: "center",
-        alignItems:"center"
+        alignItems:"center",
+        width: "20%",
       }}>
         <Icon
           name="toll"
@@ -93,11 +105,30 @@ export default function HomeScreen() {
       taskDetails: null,
       showTaskDetail: false,
     });
+    setCreateTaskOverlayVisible(false);
     fetchData();
   }
 
   return (
     <View style={styles.container}>
+      <View style={{
+            position: 'absolute',                                          
+            bottom: 10,                                               
+            right: 15,
+            width: 50,
+            height: 50,
+            zIndex: 2,
+          }}>
+         <Icon                              
+          name='plus'
+          type="font-awesome"
+          raised={true}      
+          color="navy"
+          onPress={() => {
+            setCreateTaskOverlayVisible(true);
+          }}
+        />  
+      </View>
       {/* <BottyChatComponent
         
         style={{
@@ -146,7 +177,11 @@ export default function HomeScreen() {
               rightElement={() => {
                 if (l.completed) {
                   return (
-                    <Icon name="check" type="font-awesome-5" color="white"></Icon>
+                    <View>
+                      <Icon name="award" type="font-awesome-5" color="white"></Icon>
+                    <Text style={{color: "white"}}>Done</Text>
+                    </View>
+
                   )
                 }
               }}
@@ -157,9 +192,31 @@ export default function HomeScreen() {
       </ScrollView>
 
       <Overlay isVisible={(taskDetail.showTaskDetail === true)} onBackdropPress={() => { closeTaskOverlay() }} style={{
-        padding: 20,
+        
       }}>
-        <TaskDetailsScreen task={taskDetail.taskDetails} ></TaskDetailsScreen>
+        <View style={{
+          borderColor: "gold",
+          borderWidth: 10,
+        padding: 20,
+
+        }}>
+          <TaskDetailsScreen task={taskDetail.taskDetails} onTaskCompleted={() => {
+            hapticService.quickVibrate();
+            closeTaskOverlay();
+          }}></TaskDetailsScreen>
+        </View>
+        
+      </Overlay>
+
+      <Overlay isVisible={createTaskOverlayVisible} onBackdropPress={() => { closeTaskOverlay() }} overlayStyle={{
+        width: "95%",
+        height: 500,
+        backgroundColor: "transparent",
+      }}>
+                <CreateTaskScreen onTaskCreated={() => {
+                  setCreateTaskOverlayVisible(false)
+                }}></CreateTaskScreen>
+
       </Overlay>
       
 

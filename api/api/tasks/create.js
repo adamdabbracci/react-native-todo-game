@@ -1,7 +1,7 @@
 'use strict';
 
 const uuid = require('uuid');
-const dynamodb = require('./dynamodb');
+const dynamodb = require('../dynamodb');
 
 module.exports.create = (event, context, callback) => {
 
@@ -17,7 +17,7 @@ module.exports.create = (event, context, callback) => {
     Item: {
       id: uuid.v1(),
       name: data.name,
-      assigned_to: userId,
+      assigned_to: data.assigned_to,
       assigned_by: userId,
       description: data.description,
       coin_reward: data.coin_reward,

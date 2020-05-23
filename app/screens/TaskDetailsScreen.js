@@ -4,27 +4,33 @@ import * as styles from '../styles'
 import { Button, Icon } from 'react-native-elements';
 import CurrentUserService from '../services/currentuser.service';
 import TaskService from '../services/task.service';
+import HapticService from '../services/haptic.service';
 
 const currentUserService = new CurrentUserService();
 const taskService = new TaskService();
 
 export default function TaskDetailsScreen(props) {
 
+    const [isProcessing, setProcessing] = React.useState(false);
+
     async function completeTask() {
+        setProcessing(true);
         const bank = currentUserService.addBank({
             coins: props.task.coin_reward,
-            tickets: props.task.ticket_reward,
+            tickets: 0,
         })
 
        await taskService.completeTask(props.task);
 
-       alert("Congratulations! You now have " + bank.coins + " coins and " + bank.tickets + " tickets.");
-
        
+       setProcessing(false);
+       props.onTaskCompleted()
     }
 
     return (
-        <View>
+        <View style={{
+            
+        }}>
             <Text style={{
                 fontWeight: "bold",
                 fontSize: 20,
@@ -59,59 +65,19 @@ export default function TaskDetailsScreen(props) {
                     {props.task.coin_reward} coins
                 </Text>
             </View>
-            <View style={{
-                flexDirection: "row"
-            }}>
-                <Icon
-                    name='ticket'
-                    type='font-awesome'
-                    color="gold"
-                    style={{
-                        marginRight: 10,
-                        marginTop: 10
-                    }}
-                />
-                <Text style={{
-                    marginTop: 10,
-                    color: "gold",
-                    fontWeight: "bold",
-                }}>
-
-                    {props.task.ticket_reward} tickets
-                </Text>
-            </View>
-
-
-            <View style={{
-                flexDirection: "row"
-            }}>
-                <Icon
-                    name='photo-camera'
-                    type='ionicons'
-                    color="green"
-                    style={{
-                        marginRight: 10,
-                        marginTop: 10
-                    }}
-                />
-                <Text style={{
-                    marginTop: 10,
-                    color: "green",
-                    fontWeight: "bold",
-                }}>
-
-                    Requires photo proof
-                </Text>
-            </View>
-
-
             <Button
                 title="Complete Task"
                 type="solid"
+                disabled={isProcessing}
                 raised={true}
                 onPress={completeTask}
-                style={{
-                    marginTop: 30
+                buttonStyle={{
+                    marginTop: 30,
+                    backgroundColor: "gold",
+                }}
+                titleStyle={{
+                    color: "white",
+                    fontWeight: "700"
                 }}
             />
         </View>

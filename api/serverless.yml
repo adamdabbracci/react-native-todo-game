@@ -13,10 +13,12 @@ custom:
       migrate: true
     migration:
       dir: offline/migrations
+  cognitoPoolArn: arn:aws:cognito-idp:us-east-1:332697329009:userpool/us-east-1_1905bQzmO
+  cognitoPoolId: us-east-1_1905bQzmO
 
 provider:
   name: aws
-  profile: gamifylife-amplify
+  profile: adamdabbracci
   runtime: nodejs12.x
   environment:
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
@@ -32,11 +34,13 @@ provider:
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
   authorizer:
-    arn: arn:aws:cognito-idp:us-east-1:332697329009:userpool/us-east-1_1905bQzmO
+    arn: ${self:custom.cognitoPoolArn}
 
 functions:
+
+  # TASKS {need to rename them}
   create:
-    handler: tasks/create.create
+    handler: api/tasks/create.create
     events:
       - http:
           path: tasks
@@ -44,7 +48,7 @@ functions:
           cors: true
 
   list:
-    handler: tasks/list.list
+    handler: api/tasks/list.list
     events:
       - http:
           path: tasks
@@ -52,7 +56,7 @@ functions:
           cors: true
 
   get:
-    handler: tasks/get.get
+    handler: api/tasks/get.get
     events:
       - http:
           path: tasks/{id}
@@ -60,14 +64,14 @@ functions:
           cors: true
 
   update:
-    handler: tasks/update.update
+    handler: api/tasks/update.update
     events:
       - http:
           path: tasks/{id}
           method: put
           cors: true
   complete:
-    handler: tasks/update.complete
+    handler: api/tasks/update.complete
     events:
       - http:
           path: tasks/{taskId}/complete
@@ -75,11 +79,23 @@ functions:
           cors: true
 
   delete:
-    handler: tasks/delete.delete
+    handler: api/tasks/delete.delete
     events:
       - http:
           path: tasks/{id}
           method: delete
+          cors: true
+
+
+  # /users
+  getAssignableUsers:
+    handler: api/users.getAssignableUsers
+    environment:
+      COGNITO_POOL_ID: ${self:custom.cognitoPoolId}
+    events:
+      - http:
+          path: users
+          method: get
           cors: true
 
 resources:

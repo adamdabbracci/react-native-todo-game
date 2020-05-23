@@ -9,11 +9,11 @@ import { withAuthenticator } from 'aws-amplify-react-native'
 
 import BottomTabNavigator from './navigation/BottomTabNavigator';
 import useLinking from './navigation/useLinking';
-
-import Amplify, { Auth, PubSub, API } from 'aws-amplify';
-import { AWSIoTProvider } from '@aws-amplify/pubsub/lib/Providers';
+import { Amplify } from '@aws-amplify/core';
+import { Auth } from '@aws-amplify/auth';
 import awsconfig from './aws-exports';
 import { Icon, Button } from 'react-native-elements';
+
 Amplify.configure(awsconfig);
 
 
@@ -57,22 +57,6 @@ function App(props){
     return (
       
       <SafeAreaView style={styles.container}>
-       <View style={{
-            position: 'absolute',                                          
-            top: 15,                                                    
-            right: 15,
-            width: 50,
-            height: 50,
-            zIndex: 2,
-          }}>
-         <Icon                              
-          name='plus'
-          type="font-awesome"
-          raised={true}      
-          color="navy"
-
-        />  
-      </View>
         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
         <NavigationContainer ref={containerRef} initialState={initialNavigationState} theme={{
           colors: {

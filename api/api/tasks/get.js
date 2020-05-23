@@ -1,24 +1,17 @@
 'use strict';
 
-const dynamodb = require('./dynamodb');
+const dynamodb = require('../dynamodb');
 
-module.exports.list = (event, context, callback) => {
-  const userId = event.requestContext.authorizer.claims.sub;
-
+module.exports.get = (event, context, callback) => {
   const params = {
     TableName: process.env.DYNAMODB_TABLE,
-    ExpressionAttributeValues: {
-      ":userId": {
-        S: userId
-       }
-     }, 
-     FilterExpression: "assigned_to = :userId", 
+    Key: {
+      id: event.pathParameters.id,
+    },
   };
 
-  console.log(params)
-
-  // fetch all tasks from the database
-  dynamodb.scan(params, (error, result) => {
+  // fetch task from the database
+  dynamodb.get(params, (error, result) => {
     // handle potential errors
     if (error) {
       console.error(error);
@@ -33,7 +26,7 @@ module.exports.list = (event, context, callback) => {
     // create a response
     const response = {
       statusCode: 200,
-      body: JSON.stringify(result.Items),
+      body: JSON.stringify(result.Item),
     };
     callback(null, response);
   });

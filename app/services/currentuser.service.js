@@ -23,9 +23,19 @@ export default class CurrentUserService {
     }
 
     getAccessToken = async () => {
-        const session = await Auth.currentSession();
-        return session.getAccessToken().getJwtToken();
-          
+        try {
+            const session = await Auth.currentSession();
+            accessToken = session.getAccessToken().getJwtToken();
+            return accessToken;
+        }
+        catch(ex) {
+            console.log("----- AUTH FAILURE: ------")
+            console.log(ex);
+        }
+    }
+
+    logout = async () => {
+        await Auth.signOut();
     }
 
     getUserBank = () => {
