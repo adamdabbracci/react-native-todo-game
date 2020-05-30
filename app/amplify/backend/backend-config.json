@@ -1,10 +1,9 @@
 {
 	"auth": {
-		"gamifylife772fe4dd": {
+		"gamifylifeadd55904add55904": {
 			"service": "Cognito",
 			"providerPlugin": "awscloudformation",
-			"dependsOn": [],
-			"customAuth": false
+			"dependsOn": []
 		}
 	}
 }

@@ -29,19 +29,6 @@ export default class CurrentUserService {
             console.log(error);
           });
     }
-    getUserDetails = async () => {
-        try {
-            const user = await Auth.currentAuthenticatedUser();
-            const result = user.signInUserSession.idToken.payload;
-            return result;
-        }
-        catch(ex) {
-            console.log("Failed to get user details:")
-            console.log(ex);
-            return null
-        }
-    }
-
     getAccessToken = async () => {
         try {
             const session = await Auth.currentSession();

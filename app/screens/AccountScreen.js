@@ -16,20 +16,30 @@ export default function AccountScreen(props) {
     renderUserDetails = () => {
         if (user) {
             return (
+                <View>
+                    <Text style={{
+                    color: "white",
+                    fontSize: 20,
+                    fontWeight: "500",
+                    textAlign: "center"
+                }}>
+                                        User ID
+
+                </Text>
                 <Text style={{
                     color: "white",
                     fontSize: 20,
                     fontWeight: "900",
                     textAlign: "center"
                 }}>
-                    {user.email}
+                    {user.id}
                 </Text>
+                </View>
             )
         }
         else {
-            currentUserService.getUserDetails()
+            currentUserService.getAccount()
             .then((details) => {
-                console.log(details)
                 setUser(details)
             })
         

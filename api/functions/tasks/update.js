@@ -2,10 +2,10 @@
 
 const dynamodb = require('../dynamodb');
 const UserService = require("../../services/user.service");
-const TasksService = require("../../services/tasks.service");
+const TaskService = require("../../services/task.service");
 
 const userService = new UserService();
-const tasksService = new TasksService();
+const taskService = new TaskService();
 
 module.exports.update = (event, context, callback) => {
   const timestamp = new Date().getTime();
@@ -13,7 +13,7 @@ module.exports.update = (event, context, callback) => {
 
   // validation
   if (typeof data.text !== 'string' || typeof data.checked !== 'boolean') {
-    console.error('Validation Failed');
+    console.log('Validation Failed');
     callback(null, {
       statusCode: 400,
       headers: { 'Content-Type': 'text/plain' },
@@ -23,7 +23,7 @@ module.exports.update = (event, context, callback) => {
   }
 
   const params = {
-    TableName: process.env.DYNAMODB_TABLE,
+    TableName: process.env.TASKS_TABLE,
     Key: {
       id: event.pathParameters.id,
     },
@@ -33,9 +33,9 @@ module.exports.update = (event, context, callback) => {
     ExpressionAttributeValues: {
       ':text': data.text,
       ':checked': data.checked,
-      ':updatedAt': timestamp,
+      ':updated_at': timestamp,
     },
-    UpdateExpression: 'SET #task_text = :text, checked = :checked, updatedAt = :updatedAt',
+    UpdateExpression: 'SET #task_text = :text, checked = :checked, updated_at = :updated_at',
     ReturnValues: 'ALL_NEW',
   };
 
@@ -43,7 +43,7 @@ module.exports.update = (event, context, callback) => {
   dynamodb.update(params, (error, result) => {
     // handle potential errors
     if (error) {
-      console.error(error);
+      console.log(error);
       callback(null, {
         statusCode: error.statusCode || 501,
         headers: { 'Content-Type': 'text/plain' },
@@ -72,10 +72,10 @@ module.exports.complete = async (event, context) => {
 
 
   // Load the details of the task
-  const existingTask = await tasksService.getTask(event.pathParameters.id);
+  const existingTask = await taskService.getTask(event.pathParameters.id);
 
   const params = {
-    TableName: process.env.DYNAMODB_TABLE,
+    TableName: process.env.TASKS_TABLE,
     Key: {
       id: event.pathParameters.id,
     },
@@ -84,9 +84,9 @@ module.exports.complete = async (event, context) => {
     // },
     ExpressionAttributeValues: {
       ':completed': true,
-      ':updatedAt': timestamp,
+      ':updated_at': timestamp,
     },
-    UpdateExpression: 'SET completed = :completed, updatedAt = :updatedAt',
+    UpdateExpression: 'SET completed = :completed, updated_at = :updated_at',
     ReturnValues: 'ALL_NEW',
   };
 

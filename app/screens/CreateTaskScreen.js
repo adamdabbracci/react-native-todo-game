@@ -6,14 +6,17 @@ import { RectButton, ScrollView } from 'react-native-gesture-handler';
 import { Input, Button, ListItem } from 'react-native-elements';
 import TaskService from '../services/task.service';
 import { Task } from '../services/task.model';
+import RRuleService from '../services/rrule.service';
 
 const taskService = new TaskService();
+const rRuleService = new RRuleService();
 
 const stateDefault = {
     name: "",
     description: "",
     coin_reward: "",
     assignees: {},
+    rrule: "",
 }
 
 export default function CreateTaskScreen(props) {
@@ -45,7 +48,6 @@ export default function CreateTaskScreen(props) {
         task.description = form.description;
         task.name = form.name;
         task.requires_photo_proof = false;
-
         console.log(task);
         
         taskService.createTask(task);
@@ -54,16 +56,7 @@ export default function CreateTaskScreen(props) {
         props.onTaskCreated()
     }
 
-    // const toggleAssignee = (id) => {
-    //   const _userList = userList;
-    //   const matchingUserIndex = _userList.findIndex(x => x.id === id);
-    //   _userList[matchingUserIndex].selected = !_userList[matchingUserIndex].selected;
-    //   setUserList(_userList);
-    // }
-
-
     const renderUserItem = ({item}) => {
-      console.log(item)
       return (
         <ListItem
               checkmark={(assignedUser && assignedUser.id === item.id)}
@@ -83,8 +76,13 @@ export default function CreateTaskScreen(props) {
       const getAvailableUsers = async () => {
         return taskService.getAvailableUsers()
         .then((response) =>{
-          console.log("===== LOADED USERS: " + response.length)
-          setUserList(response);
+          if (response) {
+            console.log("===== LOADED USERS: " + response.length)
+            setUserList(response);
+          }
+          else {
+            console.log("==== NO USERS LOADED.")
+          }
         })
         .catch((ex) => {
           console.log(ex)

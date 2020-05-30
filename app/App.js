@@ -15,7 +15,9 @@ import awsconfig from './aws-exports';
 import { Icon, Button } from 'react-native-elements';
 
 Amplify.configure(awsconfig);
-
+Auth.configure({
+  
+})
 const Stack = createStackNavigator();
 
 function App(props){

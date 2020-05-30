@@ -37,8 +37,6 @@ export default function HomeScreen({navigation}) {
   async function fetchBank() {
     currentUserService.getAccount()
     .then((account) => {
-      console.log("Updating bank...");
-      console.log(account);
       setBank({
         coins: account.coins,
         tickets: account.tickets,

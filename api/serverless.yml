@@ -13,16 +13,17 @@ custom:
       migrate: true
     migration:
       dir: offline/migrations
-  cognitoPoolArn: arn:aws:cognito-idp:us-east-1:332697329009:userpool/us-east-1_1905bQzmO
-  cognitoPoolId: us-east-1_1905bQzmO
+  cognitoPoolArn: arn:aws:cognito-idp:us-east-1:332697329009:userpool/us-east-1_l2R2p2vIK
+  cognitoPoolId: us-east-1_l2R2p2vIK
 
 provider:
   name: aws
   profile: adamdabbracci
   runtime: nodejs12.x
   environment:
-    DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+    TASKS_TABLE: ${self:service}-tasks-${opt:stage, self:provider.stage}
     USERS_TABLE: ${self:service}-users-${opt:stage, self:provider.stage}
+    TASK_SCHEDULES_TABLE: ${self:service}-taskschedules-${opt:stage, self:provider.stage}
     API_HOST: http://6a8c2d6f.ngrok.io
   iamRoleStatements:
     - Effect: Allow
@@ -33,7 +34,10 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+      Resource: 
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.TASKS_TABLE}"
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.USERS_TABLE}"
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.TASK_SCHEDULES_TABLE}"
   authorizer:
     arn: ${self:custom.cognitoPoolArn}
 
@@ -88,6 +92,22 @@ functions:
           cors: true
 
 
+  # schedules
+  getSchedules:
+    handler: functions/taskschedules.list
+    events:
+      - http:
+          path: schedules/{queryType}
+          method: get
+          cors: true
+
+  createSchedule:
+    handler: functions/taskschedules.create
+    events:
+      - http:
+          path: schedules
+          method: post
+          cors: true
   # /users
   getAssignableUsers:
     handler: functions/users.getAssignableUsers
@@ -107,6 +127,12 @@ functions:
           path: account
           method: get
           cors: true
+
+
+  # task scheduler (runs every hour)
+  scheduleNextDay:
+    handler: functions/scheduler.scheduleTasksForNextDay
+
 resources:
   Resources:
     tasksDynamoDbTable:
@@ -122,7 +148,7 @@ resources:
             AttributeName: id
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
-        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        TableName: ${self:provider.environment.TASKS_TABLE}
     usersTable:
       Type: 'AWS::DynamoDB::Table'
       DeletionPolicy: Retain
@@ -137,3 +163,17 @@ resources:
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.USERS_TABLE}
+    taskSchedulesTable:
+        Type: 'AWS::DynamoDB::Table'
+        DeletionPolicy: Retain
+        Properties:
+          AttributeDefinitions:
+            -
+              AttributeName: id
+              AttributeType: S
+          KeySchema:
+            -
+              AttributeName: id
+              KeyType: HASH
+          BillingMode: PAY_PER_REQUEST
+          TableName: ${self:provider.environment.TASK_SCHEDULES_TABLE}

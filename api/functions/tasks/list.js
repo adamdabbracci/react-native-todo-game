@@ -3,10 +3,11 @@
 const dynamodb = require('../dynamodb');
 
 module.exports.list = (event, context, callback) => {
+  // console.log(event)
   const userId = event.requestContext.authorizer.claims.sub;
 
   const params = {
-    TableName: process.env.DYNAMODB_TABLE,
+    TableName: process.env.TASKS_TABLE,
    
      FilterExpression: "assigned_to = :userId", 
      ExpressionAttributeValues: {
@@ -20,7 +21,7 @@ module.exports.list = (event, context, callback) => {
   dynamodb.scan(params, (error, result) => {
     // handle potential errors
     if (error) {
-      console.error(error);
+      console.log(error);
       callback(null, {
         statusCode: error.statusCode || 501,
         headers: { 'Content-Type': 'text/plain' },

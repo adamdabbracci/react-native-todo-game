@@ -50,7 +50,7 @@ curl -X POST -H "Content-Type:application/json" http://localhost:3000/todos --da
 
 Example Result:
 ```bash
-{"text":"Learn Serverless","id":"ee6490d0-aa11e6-9ede-afdfa051af86","createdAt":1479138570824,"checked":false,"updatedAt":1479138570824}%
+{"text":"Learn Serverless","id":"ee6490d0-aa11e6-9ede-afdfa051af86","created_at":1479138570824,"checked":false,"updated_at":1479138570824}%
 ```
 
 ### List all Todos
@@ -61,7 +61,7 @@ curl -H "Content-Type:application/json" http://localhost:3000/todos
 
 Example output:
 ```bash
-[{"text":"Deploy my first service","id":"ac90feaa11e6-9ede-afdfa051af86","checked":true,"updatedAt":1479139961304},{"text":"Learn Serverless","id":"206793aa11e6-9ede-afdfa051af86","createdAt":1479139943241,"checked":false,"updatedAt":1479139943241}]%
+[{"text":"Deploy my first service","id":"ac90feaa11e6-9ede-afdfa051af86","checked":true,"updated_at":1479139961304},{"text":"Learn Serverless","id":"206793aa11e6-9ede-afdfa051af86","created_at":1479139943241,"checked":false,"updated_at":1479139943241}]%
 ```
 
 ### Get one Todo
@@ -73,7 +73,7 @@ curl -H "Content-Type:application/json" http://localhost:3000/todos/<id>
 
 Example Result:
 ```bash
-{"text":"Learn Serverless","id":"ee6490d0-aa11e6-9ede-afdfa051af86","createdAt":1479138570824,"checked":false,"updatedAt":1479138570824}%
+{"text":"Learn Serverless","id":"ee6490d0-aa11e6-9ede-afdfa051af86","created_at":1479138570824,"checked":false,"updated_at":1479138570824}%
 ```
 
 ### Update a Todo
@@ -85,7 +85,7 @@ curl -X PUT -H "Content-Type:application/json" http://localhost:3000/todos/<id> 
 
 Example Result:
 ```bash
-{"text":"Learn Serverless","id":"ee6490d0-aa11e6-9ede-afdfa051af86","createdAt":1479138570824,"checked":true,"updatedAt":1479138570824}%
+{"text":"Learn Serverless","id":"ee6490d0-aa11e6-9ede-afdfa051af86","created_at":1479138570824,"checked":true,"updated_at":1479138570824}%
 ```
 
 ### Delete a Todo

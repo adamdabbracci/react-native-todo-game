@@ -1,19 +1,19 @@
 {
     "dev": {
         "awscloudformation": {
-            "AuthRoleName": "amplify-gamifylife-dev-142720-authRole",
-            "UnauthRoleArn": "arn:aws:iam::332697329009:role/amplify-gamifylife-dev-142720-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::332697329009:role/amplify-gamifylife-dev-142720-authRole",
+            "AuthRoleName": "amplify-gamifylife-dev-202237-authRole",
+            "UnauthRoleArn": "arn:aws:iam::332697329009:role/amplify-gamifylife-dev-202237-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::332697329009:role/amplify-gamifylife-dev-202237-authRole",
             "Region": "us-east-1",
-            "DeploymentBucketName": "amplify-gamifylife-dev-142720-deployment",
-            "UnauthRoleName": "amplify-gamifylife-dev-142720-unauthRole",
-            "StackName": "amplify-gamifylife-dev-142720",
-            "StackId": "arn:aws:cloudformation:us-east-1:332697329009:stack/amplify-gamifylife-dev-142720/e4ec9060-92eb-11ea-9255-127e1ad2bd25",
-            "AmplifyAppId": "d1aiopipo4n8jk"
+            "DeploymentBucketName": "amplify-gamifylife-dev-202237-deployment",
+            "UnauthRoleName": "amplify-gamifylife-dev-202237-unauthRole",
+            "StackName": "amplify-gamifylife-dev-202237",
+            "StackId": "arn:aws:cloudformation:us-east-1:332697329009:stack/amplify-gamifylife-dev-202237/adad7060-9d54-11ea-a5f9-126bf0867249",
+            "AmplifyAppId": "d3nuqi8svkw376"
         },
         "categories": {
             "auth": {
-                "gamifylife772fe4dd": {}
+                "gamifylifeadd55904add55904": {}
             }
         }
     }

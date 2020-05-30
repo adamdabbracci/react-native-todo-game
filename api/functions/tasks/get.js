@@ -4,7 +4,7 @@ const dynamodb = require('../dynamodb');
 
 module.exports.get = (event, context, callback) => {
   const params = {
-    TableName: process.env.DYNAMODB_TABLE,
+    TableName: process.env.TASKS_TABLE,
     Key: {
       id: event.pathParameters.id,
     },
@@ -14,7 +14,7 @@ module.exports.get = (event, context, callback) => {
   dynamodb.get(params, (error, result) => {
     // handle potential errors
     if (error) {
-      console.error(error);
+      console.log(error);
       callback(null, {
         statusCode: error.statusCode || 501,
         headers: { 'Content-Type': 'text/plain' },

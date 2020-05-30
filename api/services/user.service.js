@@ -25,6 +25,18 @@ module.exports = class UserService {
         }
         
       }
+
+      getAssignableUsers = async (userId) => {
+        const params = {
+          TableName: process.env.USERS_TABLE,
+        };
+
+        // TODO Pull by "parent" on each user
+        const results = await dynamodb.scan(params).promise();
+
+        return results.Items;
+        
+      }
     
       createUser = async (userId) => {
         const params = {
@@ -49,10 +61,10 @@ module.exports = class UserService {
           ExpressionAttributeValues: {
             ':coins': user.coins,
             ':tickets': user.tickets,
-            ':updatedAt': new Date().getTime(),
+            ':updated_at': new Date().getTime(),
     
           },
-          UpdateExpression: 'SET coins = :coins, tickets = :tickets, updatedAt = :updatedAt',
+          UpdateExpression: 'SET coins = :coins, tickets = :tickets, updated_at = :updated_at',
           ReturnValues: 'ALL_NEW',
         };
     

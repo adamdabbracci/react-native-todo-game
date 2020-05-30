@@ -1,23 +1,4 @@
-export class Task {
-    id;
-    assigned_to;
-    assgined_by;
-    name;
-    description;
-    coin_reward = 0;
-    category;
-    requires_photo_proof = false;
-    completed = false;
-    /**
-     * Timestamp when this task expires
-     *
-     * @memberof Task
-     */
-    deadline;
-    
-}
-
-export class TaskSchedule {
+module.exports = class TaskSchedule {
     id;
 
     /**
@@ -70,6 +51,11 @@ export class TaskSchedule {
      */
     frequency;
 
-    
+    /**
+     * The RRule string reprsenting the frequency
+     *
+     * @memberof TaskSchedule
+     */
+    rrule;
     
 }

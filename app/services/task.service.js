@@ -31,7 +31,7 @@ export default class TaskService {
         })
         .then((response) => response.json())
         .catch((error) => {
-          console.error(error);
+          console.log(error);
         });
     }
 
@@ -44,7 +44,7 @@ export default class TaskService {
           
         .then((response) => response.json())
         .catch((error) => {
-          console.error(error);
+          console.log(error);
         });
     }
 
@@ -57,7 +57,7 @@ export default class TaskService {
           
         .then((response) => response.json())
         .catch((error) => {
-          console.error(error);
+          console.log(error);
         });
     }
 
@@ -67,24 +67,15 @@ export default class TaskService {
      * @memberof TaskService
      */
     getAvailableUsers = async () => {
-      console.log(this.headers)
+
+      console.log(await this.getHeaders())
 
         return fetch(`${apiPath}/users`, {
           headers: await this.getHeaders(),
         })
-        .then(async (response) => {
-          const cognitoUsers = await response.json();
-          const users = cognitoUsers["Users"].map(x => {
-            const user = new User();
-            user.id = x.Attributes.filter(x => x.Name === "sub")[0].Value;
-            user.email = x.Attributes.filter(x => x.Name === "email")[0].Value;
-            user.phone = x.Attributes.filter(x => x.Name === "phone_number")[0].Value;
-            return user;
-          })
-          return users;
-        })
+        .then(response => response.json())
         .catch((error) => {
-          console.error(error);
+          console.log(error);
         });
     }
 }
