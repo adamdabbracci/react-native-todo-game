@@ -8,31 +8,43 @@ const moment = require("moment");
 const rrule = require("rrule");
 
 
-module.exports.scheduleTasksForNextDay = async (event, context) => {
-    const startDateMoment = moment().utc().startOf("day").add(1, "day");
+module.exports.scheduleTodaysTasks = async (event, context) => {
+    const startDateMoment = moment().utc().startOf("day");
+    console.log(`Generating tasks for ${startDateMoment.toString()}`)
     const activeSchedules = await taskScheduleService.getActiveSchedulesForDate(startDateMoment.unix());
 
     const tasksToSchedule = [];
 
     // Check if the RRule matches tomorrow
     activeSchedules.forEach((schedule) => {
+      // build an RRUle from the stored string
       const scheduleRRule = new rrule.rrulestr(schedule.rrule);
-      const matchingDates = scheduleRRule.between(moment().utc().startOf("day").toDate(), moment().utc().add(2, "days").startOf("day").toDate());
+      console.log(schedule.rrule)
+      // Generate dates matching the RRULE +/- 1 day so we don't get f'ed by timezones
+      const matchingDates = scheduleRRule.between(startDateMoment.clone().subtract(1, "days").toDate(), startDateMoment.clone().add(1, "days").toDate());
+      console.log(matchingDates)
+      // Check if the target date matches one of those dates
       const doesMatchTomorrow = matchingDates.map(x => moment(x).toISOString()).indexOf(startDateMoment.toISOString()) > -1;
       console.log(`${schedule.id}} matches: ${doesMatchTomorrow}`)
 
+      // If it matches, generate a new task
       if (doesMatchTomorrow) {
         let task = new Task();
         task = schedule.task;
         task.assigned_to = schedule.assigned_to;
         task.created_by = schedule.created_by;
         task.schedule_id = schedule.id;
+        task.assigned_date = startDateMoment.format("MM-DD-YYYY");
+        console.log(task);
         tasksToSchedule.push(task);
       }
     })
 
     for (let index = 0; index < tasksToSchedule.length; index++) {
-      await taskService.createTask(tasksToSchedule[index]);
+      const thisTask = tasksToSchedule[index];
+      // Delete any tasks that were already scheduled for this schedule
+      await taskService.deleteIncompleteTasksByScheduleId(thisTask.schedule_id);
+      await taskService.createTask(thisTask);
     }
 
     return {

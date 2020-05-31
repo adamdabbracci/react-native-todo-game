@@ -24,7 +24,7 @@ provider:
     TASKS_TABLE: ${self:service}-tasks-${opt:stage, self:provider.stage}
     USERS_TABLE: ${self:service}-users-${opt:stage, self:provider.stage}
     TASK_SCHEDULES_TABLE: ${self:service}-taskschedules-${opt:stage, self:provider.stage}
-    API_HOST: http://6a8c2d6f.ngrok.io
+    API_HOST:  http://aed6bb6b72f0.ngrok.io
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -130,8 +130,8 @@ functions:
 
 
   # task scheduler (runs every hour)
-  scheduleNextDay:
-    handler: functions/scheduler.scheduleTasksForNextDay
+  scheduleTodaysTasks:
+    handler: functions/scheduler.scheduleTodaysTasks
 
 resources:
   Resources:

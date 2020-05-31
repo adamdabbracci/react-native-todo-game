@@ -21,6 +21,13 @@ export class TaskSchedule {
     id;
 
     /**
+     * The date the task is assigned to
+     *
+     * @memberof TaskSchedule
+     */
+    assigned_date;
+
+    /**
      * The user ID of the creator
      *
      * @type {string}
