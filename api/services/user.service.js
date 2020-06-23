@@ -1,4 +1,5 @@
 const dynamodb = require('../functions/dynamodb');
+const cognito = require('../functions/cognito');
 
 
 module.exports = class UserService {
@@ -14,8 +15,18 @@ module.exports = class UserService {
 
         // Create one if it doesn't exist
         if (!results.Item) {
-          console.log(`USER ${userId} NOT FOUND, CREATING`)
-          await this.createUser(userId);
+          console.log(`USER ${userId} NOT FOUND, CREATING`);
+
+          const cognitoUser = await cognito.identityServiceProvider.adminGetUser({
+            Username: userId,
+            UserPoolId: process.env.COGNITO_POOL_ID
+          }).promise();
+          console.log(cognitoUser)
+
+
+          await this.createUser({
+            id: userId,
+          });
 
           const newUser = await dynamodb.get(params).promise();
           return newUser.Item;
@@ -33,16 +44,15 @@ module.exports = class UserService {
 
         // TODO Pull by "parent" on each user
         const results = await dynamodb.scan(params).promise();
-
         return results.Items;
         
       }
     
-      createUser = async (userId) => {
+      createUser = async (user) => {
         const params = {
           TableName: process.env.USERS_TABLE,
           Item: {
-            id: userId,
+            id: user.id,
             coins: 50,
             tickets: 1,
           }

@@ -69,11 +69,12 @@ export default function CreateTaskScreen(props) {
     }
 
     const renderUserItem = ({item}) => {
+      console.log(item)
       return (
         <ListItem
               checkmark={(assignedUser && assignedUser.id === item.id)}
               leftAvatar={{ source: { uri: item.avatar_url } }}
-              title={item.email}
+              title={item.username}
               subtitle={`Click to assign this task.`}
               onPress={(event) => {
                 setAssignedUser(item.id);
