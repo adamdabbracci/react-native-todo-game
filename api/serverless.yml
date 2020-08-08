@@ -13,8 +13,8 @@ custom:
       migrate: true
     migration:
       dir: offline/migrations
-  cognitoPoolArn: arn:aws:cognito-idp:us-east-1:332697329009:userpool/us-east-1_l2R2p2vIK
-  cognitoPoolId: us-east-1_l2R2p2vIK
+  cognitoPoolArn: arn:aws:cognito-idp:us-east-1:332697329009:userpool/us-east-1_ZFQicxKV2
+  cognitoPoolId: us-east-1_ZFQicxKV2
 
 provider:
   name: aws
@@ -24,7 +24,8 @@ provider:
     TASKS_TABLE: ${self:service}-tasks-${opt:stage, self:provider.stage}
     USERS_TABLE: ${self:service}-users-${opt:stage, self:provider.stage}
     TASK_SCHEDULES_TABLE: ${self:service}-taskschedules-${opt:stage, self:provider.stage}
-    API_HOST:  http://aed6bb6b72f0.ngrok.io
+    COGNITO_POOL_ID: ${self:custom.cognitoPoolId}
+    API_HOST:  http://e28721c126b9.ngrok.io
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -111,8 +112,6 @@ functions:
   # /users
   getAssignableUsers:
     handler: functions/users.getAssignableUsers
-    environment:
-      COGNITO_POOL_ID: ${self:custom.cognitoPoolId}
     events:
       - http:
           path: users

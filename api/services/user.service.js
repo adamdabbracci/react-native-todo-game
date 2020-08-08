@@ -11,21 +11,27 @@ module.exports = class UserService {
           },
         };
 
+      console.log(params)
+
+
         const results = await dynamodb.get(params).promise();
 
         // Create one if it doesn't exist
         if (!results.Item) {
           console.log(`USER ${userId} NOT FOUND, CREATING`);
-
-          const cognitoUser = await cognito.identityServiceProvider.adminGetUser({
+          const getConfig = {
             Username: userId,
             UserPoolId: process.env.COGNITO_POOL_ID
-          }).promise();
+          };
+          console.log(getConfig)
+
+          const cognitoUser = await cognito.identityServiceProvider.adminGetUser(getConfig).promise();
           console.log(cognitoUser)
 
 
           await this.createUser({
             id: userId,
+            email_address: cognitoUser.UserAttributes.find(x => x.Name === 'email').Value,
           });
 
           const newUser = await dynamodb.get(params).promise();
@@ -53,6 +59,7 @@ module.exports = class UserService {
           TableName: process.env.USERS_TABLE,
           Item: {
             id: user.id,
+            email_address: user.email_address,
             coins: 50,
             tickets: 1,
           }

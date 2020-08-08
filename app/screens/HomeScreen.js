@@ -230,8 +230,8 @@ export default function HomeScreen({navigation}) {
       </Overlay>
 
       <Overlay isVisible={createTaskOverlayVisible} onBackdropPress={() => { closeTaskOverlay() }} overlayStyle={{
-        width: "95%",
-        height: 500,
+        width: "99%",
+        height: "99%",
         backgroundColor: "transparent",
       }}>
                 <CreateTaskScreen onTaskCreated={() => {

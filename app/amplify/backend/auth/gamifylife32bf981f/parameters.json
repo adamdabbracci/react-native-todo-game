@@ -1,12 +1,12 @@
 {
-    "identityPoolName": "gamifylifeadd55904_identitypool_add55904",
+    "identityPoolName": "gamifylife32bf981f_identitypool_32bf981f",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "gamifyadd55904",
-    "userPoolName": "gamifylifeadd55904_userpool_add55904",
+    "resourceNameTruncated": "gamify32bf981f",
+    "userPoolName": "gamifylife32bf981f_userpool_32bf981f",
     "autoVerifiedAttributes": [
         "email"
     ],
-    "mfaConfiguration": "ON",
+    "mfaConfiguration": "OFF",
     "mfaTypes": [
         "SMS Text Message"
     ],
@@ -28,20 +28,11 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "gamifyadd55904_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "gamify32bf981f_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "useDefault": "manual",
+    "sharedId": "32bf981f",
+    "resourceName": "gamifylife32bf981f",
     "authSelections": "identityPoolAndUserPool",
-    "resourceName": "gamifylifeadd55904add55904",
-    "thirdPartyAuth": false,
-    "usernameAttributes": [
-        "phone_number"
-    ],
-    "userPoolGroups": false,
-    "adminQueries": false,
-    "triggers": "{}",
-    "hostedUI": false,
-    "userPoolGroupList": [],
     "authRoleArn": {
         "Fn::GetAtt": [
             "AuthRole",
@@ -54,6 +45,12 @@
             "Arn"
         ]
     },
+    "useDefault": "default",
+    "usernameAttributes": [
+        "phone_number"
+    ],
+    "triggers": "{}",
+    "userPoolGroupList": [],
     "parentStack": {
         "Ref": "AWS::StackId"
     },

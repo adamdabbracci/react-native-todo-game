@@ -1,11 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
-import * as WebBrowser from 'expo-web-browser';
 import * as React from 'react';
 import { StyleSheet, Text, View, FlatList, Switch } from 'react-native';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
 import { Input, Button, ListItem, ButtonGroup } from 'react-native-elements';
 import TaskService from '../services/task.service';
-import { Task } from '../services/task.model';
+import { Task, TaskSchedule } from '../services/task.model';
 import RRuleService from '../services/rrule.service';
 
 const taskService = new TaskService();
@@ -23,9 +22,9 @@ export default function CreateTaskScreen(props) {
 
     // Form defaults
     const taskDefault = {
-      name: "",
-      description: "",
-      coin_reward: "",
+      name: "Test Task",
+      description: "A nice description",
+      coin_reward: 10,
       assignees: {},
   }
 
@@ -33,7 +32,7 @@ export default function CreateTaskScreen(props) {
     const [form, setForm] = React.useState(taskDefault);
     const [isRecurring, setIsRecurring] = React.useState(false);
     const [schedule, setSchedule] = React.useState({
-      frequency: "DAILY",
+      frequency: 0,
     })
 
     // User List
@@ -50,7 +49,7 @@ export default function CreateTaskScreen(props) {
         setForm(_form);
     }
 
-    const submitForm = () => {
+    const submitForm = async () => {
         setCreatingTask(true);
 
         // Pull out the users to assign it to
@@ -62,7 +61,21 @@ export default function CreateTaskScreen(props) {
         task.requires_photo_proof = false;
         console.log(task);
         
-        taskService.createTask(task);
+        // taskService.createTask(task);
+
+        // If not recurring, setup task
+        if (!isRecurring) {
+          await taskService.createTask(task);
+        }
+        // If recurring, setup schedule
+        else {
+          const taskSchedule = new TaskSchedule();
+          taskSchedule.task = task;
+          taskSchedule.assigned_to = task.assigned_to;
+          taskSchedule.frequency = schedule;
+          await taskService.createTaskSchedule(taskSchedule);
+        }
+
         setCreatingTask(false);
         setForm(taskDefault);
         props.onTaskCreated()
@@ -74,7 +87,7 @@ export default function CreateTaskScreen(props) {
         <ListItem
               checkmark={(assignedUser && assignedUser.id === item.id)}
               leftAvatar={{ source: { uri: item.avatar_url } }}
-              title={item.username}
+              title={item.email_address}
               subtitle={`Click to assign this task.`}
               onPress={(event) => {
                 setAssignedUser(item.id);
@@ -87,14 +100,17 @@ export default function CreateTaskScreen(props) {
     const renderRecurringForm = () => {
       if (isRecurring) {
         return (
-          <ButtonGroup
+          <View>
+            <ButtonGroup
             onPress={(selectedIndex) => {
-              console.log(selectedIndex)
+              setSchedule(scheduleOptions.frequency[selectedIndex])
             }}
-            selectedIndex={0}
+            selectedIndex={scheduleOptions.frequency.indexOf(schedule)}
             buttons={scheduleOptions.frequency}
             containerStyle={{}}
           />
+          <Text>Will start immediately and run until cancelled. We are working on making start/end date and more configurale.</Text>
+          </View>
         )
       }
       else {
@@ -211,6 +227,22 @@ export default function CreateTaskScreen(props) {
               borderRadius: 20
             }}
             onPress={submitForm}
+          />
+
+            <Button
+            title="Cancel"
+            raised
+            disabled={creatingTask}
+            titleStyle={{
+              fontWeight: "bold",
+              color: "gold"
+            }}
+            buttonStyle={{
+              backgroundColor: "white",
+              borderColor: "white",
+              borderWidth: 2,
+              borderRadius: 20
+            }}
           />
       </View>
 

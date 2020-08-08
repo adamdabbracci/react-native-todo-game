@@ -27,7 +27,7 @@ module.exports = class TaskScheduleService {
         const params = {
           TableName: process.env.TASK_SCHEDULES_TABLE,
         
-          FilterExpression: "start_date < :date AND end_date > :date", 
+          FilterExpression: "start_date <= :date AND end_date >= :date", 
           ExpressionAttributeValues: {
             ':date': date,
           }, 
@@ -89,7 +89,9 @@ module.exports = class TaskScheduleService {
         taskSchedule.id = uuid.v4();
         taskSchedule.created_by = createdBy;
         taskSchedule.start_date = startMoment.unix();
+        taskSchedule.start_date_string = startMoment.toISOString();
         taskSchedule.end_date = endMoment.unix();
+        taskSchedule.end_date_string = endMoment.toISOString();
         taskSchedule.rrule = newRRule.toString();
 
         const timestamp = new Date().getTime();

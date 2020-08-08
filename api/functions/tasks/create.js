@@ -5,7 +5,6 @@ const taskService = new TaskService();
 
 module.exports.create = async (event, context) => {
 
-  console.log(event.requestContext.authorizer)
   const userId = event.requestContext.authorizer.claims.sub;
 
 
@@ -13,9 +12,10 @@ module.exports.create = async (event, context) => {
   task.created_by = userId;
   
   const results = await taskService.createTask(task);
+
+  
   return {
-    statusCode: 200,
-    body: JSON.stringify(results),
+    statusCode: 201,
   };
   
 };

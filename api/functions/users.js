@@ -11,6 +11,7 @@ module.exports.getAssignableUsers = async (event, context) => {
   
   // fetch task from the database
   const users = await userService.getAssignableUsers(userId);
+  
   return {
     statusCode: 200,
     body: JSON.stringify(users)

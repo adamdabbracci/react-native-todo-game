@@ -13,6 +13,9 @@ module.exports.scheduleTodaysTasks = async (event, context) => {
     console.log(`Generating tasks for ${startDateMoment.toString()}`)
     const activeSchedules = await taskScheduleService.getActiveSchedulesForDate(startDateMoment.unix());
 
+    console.log("Active schedules for the date:")
+    console.log(activeSchedules)
+
     const tasksToSchedule = [];
 
     // Check if the RRule matches tomorrow

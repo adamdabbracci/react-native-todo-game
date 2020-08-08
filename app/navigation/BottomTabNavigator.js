@@ -40,7 +40,7 @@ export default function BottomTabNavigator({ navigation, route }) {
         component={CreateTaskScreen}
         options={{
           title: 'Create Task',
-          tabBarVisible: false
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-add" />,
         }}
       /> */}
       <BottomTab.Screen
