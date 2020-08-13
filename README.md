@@ -4,13 +4,21 @@ https://docs.expo.io
 
 # Features
 [X] Tasks
+
 [~] Task scheduler (working, just needs some additonal testing and verification)
+
 [] Advance task schedling (like start/end date)
+
 [] Real-time user provisioning
+
 [] Push notifications
+
 [] "Parent" relationship to other accounts
+
 [] Coin Store (including IAP)
+
 [] Ticket rewards
+
 [] Detailed account screen
 
 
