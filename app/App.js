@@ -13,6 +13,7 @@ import { Amplify } from '@aws-amplify/core';
 import { Auth } from '@aws-amplify/auth';
 import awsconfig from './aws-exports';
 import { Icon, Button } from 'react-native-elements';
+import ManageTasksScreen from './screens/ManageTasksScreen';
 
 Amplify.configure(awsconfig);
 // Auth.configure({

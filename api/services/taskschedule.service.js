@@ -63,7 +63,6 @@ module.exports = class TaskScheduleService {
             ':userId': userId,
            }, 
         };
-      
 
         const results = await dynamodb.scan(params).promise();
 
@@ -71,7 +70,7 @@ module.exports = class TaskScheduleService {
       }
     
 
-    createTaskSchedule = async (createdBy, _taskSchedule) => {
+    createTaskSchedule = async (_taskSchedule) => {
 
       
       const startMoment =  moment(_taskSchedule.start_date).utc().startOf("day");
@@ -87,7 +86,6 @@ module.exports = class TaskScheduleService {
       try {
         const taskSchedule = Object.assign(new TaskSchedule(), _taskSchedule);
         taskSchedule.id = uuid.v4();
-        taskSchedule.created_by = createdBy;
         taskSchedule.start_date = startMoment.unix();
         taskSchedule.start_date_string = startMoment.toISOString();
         taskSchedule.end_date = endMoment.unix();

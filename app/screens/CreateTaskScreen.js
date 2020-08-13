@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as React from 'react';
+import  moment from 'moment';
 import { StyleSheet, Text, View, FlatList, Switch } from 'react-native';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
 import { Input, Button, ListItem, ButtonGroup } from 'react-native-elements';
@@ -73,6 +74,8 @@ export default function CreateTaskScreen(props) {
           taskSchedule.task = task;
           taskSchedule.assigned_to = task.assigned_to;
           taskSchedule.frequency = schedule;
+          taskSchedule.start_date = moment();
+          taskSchedule.end_date = moment().add(1, "year");
           await taskService.createTaskSchedule(taskSchedule);
         }
 
@@ -82,7 +85,6 @@ export default function CreateTaskScreen(props) {
     }
 
     const renderUserItem = ({item}) => {
-      console.log(item)
       return (
         <ListItem
               checkmark={(assignedUser && assignedUser.id === item.id)}
@@ -190,6 +192,7 @@ export default function CreateTaskScreen(props) {
           trackColor={{ true: "gold" }}
           thumbColor={true ? "#f5dd4b" : "#f4f3f4"}
           ios_backgroundColor="#3e3e3e"
+
           onValueChange={() => {
             const r = isRecurring;
             setIsRecurring(!r)
@@ -197,7 +200,7 @@ export default function CreateTaskScreen(props) {
           value={isRecurring}
         />
         <Text style={{
-          top: 7,
+          top: 2,
           left: 10,
           fontWeight: "600",
           fontSize: 20
@@ -232,7 +235,9 @@ export default function CreateTaskScreen(props) {
             <Button
             title="Cancel"
             raised
-            disabled={creatingTask}
+            onPress={() => {
+              props.onTaskCreated()
+            }}
             titleStyle={{
               fontWeight: "bold",
               color: "gold"

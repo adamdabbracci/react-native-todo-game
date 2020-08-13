@@ -48,6 +48,36 @@ export default class TaskService {
         });
     }
 
+    getCreatedTasks = async () => {
+      return fetch(`${apiPath}/tasks&?type=created`, {
+        headers: await this.getHeaders(),
+      })
+      .then((response) => response.json())
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+    getCreatedTaskSchedules = async () => {
+      return fetch(`${apiPath}/schedules?type=created`, {
+        headers: await this.getHeaders(),
+      })
+      .then((response) => response.json())
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  getTasksCreatedBySchedule = async (scheduleId) => {
+    return fetch(`${apiPath}/schedules/${scheduleId}/tasks`, {
+      headers: await this.getHeaders(),
+    })
+    .then((response) => response.json())
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
     createTaskSchedule = async (taskSchedule) => {    
       return fetch(`${apiPath}/schedules`, {
           method: 'POST',
@@ -80,9 +110,6 @@ export default class TaskService {
      * @memberof TaskService
      */
     getAvailableUsers = async () => {
-
-      console.log(await this.getHeaders())
-
         return fetch(`${apiPath}/users`, {
           headers: await this.getHeaders(),
         })

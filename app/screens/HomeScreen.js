@@ -31,7 +31,6 @@ export default function HomeScreen({navigation}) {
     taskDetails: null,
   });
 
-  const [createTaskOverlayVisible, setCreateTaskOverlayVisible] = React.useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
 
   async function fetchBank() {
@@ -92,6 +91,15 @@ export default function HomeScreen({navigation}) {
     })
   }, [refreshing]);
 
+
+  function closeTaskOverlay() {
+    setTaskDetail({
+      taskDetails: null,
+      showTaskDetail: false,
+    });
+    setCreateTaskOverlayVisible(false);
+  }
+  
   const buildRewardDetailElement = (coincount) => {
     return (
       <View style={{
@@ -121,34 +129,11 @@ export default function HomeScreen({navigation}) {
   }
 
 
-  function closeTaskOverlay() {
-    setTaskDetail({
-      taskDetails: null,
-      showTaskDetail: false,
-    });
-    setCreateTaskOverlayVisible(false);
-  }
+  
 
   return (
     <View style={styles.container}>
-      <View style={{
-            position: 'absolute',                                          
-            bottom: 10,                                               
-            right: 15,
-            width: 50,
-            height: 50,
-            zIndex: 2,
-          }}>
-         <Icon                              
-          name='plus'
-          type="font-awesome"
-          raised={true}      
-          color="navy"
-          onPress={() => {
-            setCreateTaskOverlayVisible(true);
-          }}
-        />  
-      </View>
+      
       {/* <BottyChatComponent
         
         style={{
@@ -229,16 +214,7 @@ export default function HomeScreen({navigation}) {
         
       </Overlay>
 
-      <Overlay isVisible={createTaskOverlayVisible} onBackdropPress={() => { closeTaskOverlay() }} overlayStyle={{
-        width: "99%",
-        height: "99%",
-        backgroundColor: "transparent",
-      }}>
-                <CreateTaskScreen onTaskCreated={() => {
-                  setCreateTaskOverlayVisible(false)
-                }}></CreateTaskScreen>
-
-      </Overlay>
+      
       
 
     </View>

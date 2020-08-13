@@ -98,9 +98,11 @@ functions:
     handler: functions/taskschedules.list
     events:
       - http:
-          path: schedules/{queryType}
+          path: schedules
           method: get
           cors: true
+          query:
+            - type
 
   createSchedule:
     handler: functions/taskschedules.create
@@ -108,6 +110,14 @@ functions:
       - http:
           path: schedules
           method: post
+          cors: true
+
+  getTasksBySchedule:
+    handler: functions/taskschedules.listTasksFromSchedule
+    events:
+      - http:
+          path: schedules/{id}/tasks
+          method: get
           cors: true
   # /users
   getAssignableUsers:
@@ -131,6 +141,7 @@ functions:
   # task scheduler (runs every hour)
   scheduleTodaysTasks:
     handler: functions/scheduler.scheduleTodaysTasks
+    schedule: rate(1 hour)
 
 resources:
   Resources:
