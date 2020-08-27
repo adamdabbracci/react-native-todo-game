@@ -20,27 +20,33 @@ module.exports.scheduleTodaysTasks = async (event, context) => {
 
     // Check if the RRule matches tomorrow
     activeSchedules.forEach((schedule) => {
+      console.log(`======  START SCHEDULE ${schedule.id} ====== `)
       // build an RRUle from the stored string
       const scheduleRRule = new rrule.rrulestr(schedule.rrule);
+      console.log(`RRULE:`);
       console.log(schedule.rrule)
       // Generate dates matching the RRULE +/- 1 day so we don't get f'ed by timezones
       const matchingDates = scheduleRRule.between(startDateMoment.clone().subtract(1, "days").toDate(), startDateMoment.clone().add(1, "days").toDate());
+      console.log(`MATCHING DATE:`);
       console.log(matchingDates)
       // Check if the target date matches one of those dates
-      const doesMatchTomorrow = matchingDates.map(x => moment(x).toISOString()).indexOf(startDateMoment.toISOString()) > -1;
-      console.log(`${schedule.id}} matches: ${doesMatchTomorrow}`)
+      const doesMatchToday = matchingDates.map(x => moment(x).toISOString()).indexOf(startDateMoment.toISOString()) > -1;
+      console.log(`MATCHES TODAY?: ${doesMatchToday}`);
 
       // If it matches, generate a new task
-      if (doesMatchTomorrow) {
+      if (doesMatchToday) {
         let task = new Task();
         task = schedule.task;
         task.assigned_to = schedule.assigned_to;
         task.created_by = schedule.created_by;
         task.schedule_id = schedule.id;
         task.assigned_date = startDateMoment.format("MM-DD-YYYY");
+        console.log("CREATING TASK:")
         console.log(task);
         tasksToSchedule.push(task);
       }
+      console.log(`======  END SCHEDULE ${schedule.id} ====== `)
+
     })
 
     for (let index = 0; index < tasksToSchedule.length; index++) {
@@ -49,6 +55,7 @@ module.exports.scheduleTodaysTasks = async (event, context) => {
       await taskService.deleteIncompleteTasksByScheduleId(thisTask.schedule_id);
       await taskService.createTask(thisTask);
     }
+
 
     return {
         statusCode: 200,

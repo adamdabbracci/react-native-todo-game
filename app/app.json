@@ -1,20 +1,24 @@
 {
   "expo": {
-    "name": "app",
-    "slug": "app",
+    "name": "LvlUp",
+    "slug": "lvl-up",
     "platforms": [
       "ios",
       "android",
       "web"
     ],
     "version": "1.0.0",
+    "sdkVersion": "37.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "lvlup",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
+    },
+    "android": {
+      "package": "com.dabbraccienterprises.lvlup"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -23,7 +27,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "com.companyname.appname"
     }
   }
 }

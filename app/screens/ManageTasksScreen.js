@@ -89,7 +89,7 @@ export default function ManageTasksScreen(props) {
                 fontWeight: "900",
                 textAlign: "center"
             }}>
-                Manage Tasks
+                Manage Chore Schedules
                 </Text>
 
                 <Icon                              

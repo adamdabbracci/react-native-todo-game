@@ -3,9 +3,11 @@ import { View, Text } from 'react-native';
 import * as styles from '../styles'
 import { Button, Icon, withTheme } from 'react-native-elements';
 import CurrentUserService from '../services/currentuser.service';
+import PushService from '../services/push.service';
 import TaskService from '../services/task.service';
 
 const currentUserService = new CurrentUserService();
+const pushService = new PushService();
 
 export default function AccountScreen(props) {
 
@@ -15,6 +17,7 @@ export default function AccountScreen(props) {
    
     renderUserDetails = () => {
         if (user) {
+            console.log("Found user.")
             return (
                 <View>
                     <Text style={{
@@ -77,6 +80,8 @@ export default function AccountScreen(props) {
         )
     }
 
+    console.log(renderUserDetails)
+
     return (
         <View style={{
             marginTop: 40,
@@ -92,6 +97,27 @@ export default function AccountScreen(props) {
                marginTop: 20
            }}>
            {renderAccountButton()}
+
+           <Button
+                title="Enable Push Notiifcations"
+                type="solid"
+                raised={true}
+                
+                buttonStyle={{
+                    backgroundColor: "gold",
+                    borderColor: "white",
+                    borderRadius: 10,
+                    borderWidth: 2,
+                }}
+                titleStyle={{
+                    color: "white",
+                    fontWeight: "700"
+                }}
+
+                onPress={() => {
+                    pushService.registerForPushNotificationsAsync()
+                }}
+            />
            </View>
            
         </View>

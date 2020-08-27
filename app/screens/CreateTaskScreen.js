@@ -31,7 +31,6 @@ export default function CreateTaskScreen(props) {
 
     // Main Form
     const [form, setForm] = React.useState(taskDefault);
-    const [isRecurring, setIsRecurring] = React.useState(false);
     const [schedule, setSchedule] = React.useState({
       frequency: 0,
     })
@@ -65,61 +64,64 @@ export default function CreateTaskScreen(props) {
         // taskService.createTask(task);
 
         // If not recurring, setup task
-        if (!isRecurring) {
-          await taskService.createTask(task);
-        }
-        // If recurring, setup schedule
-        else {
-          const taskSchedule = new TaskSchedule();
+        // if (!isRecurring) {
+        //   await taskService.createTask(task);
+        // }
+        // // If recurring, setup schedule
+        // else {
+        //   const taskSchedule = new TaskSchedule();
+        //   taskSchedule.task = task;
+        //   taskSchedule.assigned_to = task.assigned_to;
+        //   taskSchedule.frequency = schedule;
+        //   taskSchedule.start_date = moment();
+        //   taskSchedule.end_date = moment().add(1, "year");
+        //   await taskService.createTaskSchedule(taskSchedule);
+        // }
+        const taskSchedule = new TaskSchedule();
           taskSchedule.task = task;
           taskSchedule.assigned_to = task.assigned_to;
           taskSchedule.frequency = schedule;
           taskSchedule.start_date = moment();
           taskSchedule.end_date = moment().add(1, "year");
           await taskService.createTaskSchedule(taskSchedule);
-        }
 
         setCreatingTask(false);
         setForm(taskDefault);
-        props.onTaskCreated()
+        console.log(props)
+        if (props.onTaskCreated) {
+          props.onTaskCreated()
+        }
+        props.navigation.goBack();
     }
 
     const renderUserItem = ({item}) => {
       return (
         <ListItem
-              checkmark={(assignedUser && assignedUser.id === item.id)}
-              leftAvatar={{ source: { uri: item.avatar_url } }}
+              checkmark={(assignedUser && assignedUser === item.id)}
+              // leftAvatar={{ source: { uri: item.avatar_url } }}
               title={item.email_address}
               subtitle={`Click to assign this task.`}
               onPress={(event) => {
                 setAssignedUser(item.id);
               }}
-              bottomDivider
             />
       )
     }
 
     const renderRecurringForm = () => {
-      if (isRecurring) {
-        return (
-          <View>
-            <ButtonGroup
-            onPress={(selectedIndex) => {
-              setSchedule(scheduleOptions.frequency[selectedIndex])
-            }}
-            selectedIndex={scheduleOptions.frequency.indexOf(schedule)}
-            buttons={scheduleOptions.frequency}
-            containerStyle={{}}
-          />
-          <Text>Will start immediately and run until cancelled. We are working on making start/end date and more configurale.</Text>
-          </View>
-        )
-      }
-      else {
-        return (
-          <View></View>
-        )
-      }
+      return (
+        <View>
+          <ButtonGroup
+          onPress={(selectedIndex) => {
+            setSchedule(scheduleOptions.frequency[selectedIndex])
+          }}
+          selectedIndex={scheduleOptions.frequency.indexOf(schedule)}
+          buttons={scheduleOptions.frequency}
+          containerStyle={{}}
+        />
+        <Text>Will start immediately and run until cancelled. We are working on making start/end date and more configurale.</Text>
+        </View>
+      )
     }
 
     React.useEffect(() => {
@@ -184,29 +186,6 @@ export default function CreateTaskScreen(props) {
               />
       </View>
 
-      <View style={{
-        flexDirection: "row",
-        marginTop: 10
-      }}>
-        <Switch
-          trackColor={{ true: "gold" }}
-          thumbColor={true ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-
-          onValueChange={() => {
-            const r = isRecurring;
-            setIsRecurring(!r)
-          }}
-          value={isRecurring}
-        />
-        <Text style={{
-          top: 2,
-          left: 10,
-          fontWeight: "600",
-          fontSize: 20
-        }}>Recurring</Text>
-      </View>
-
       <View>
         {renderRecurringForm()}
       </View>
@@ -232,11 +211,13 @@ export default function CreateTaskScreen(props) {
             onPress={submitForm}
           />
 
-            <Button
+            {/* <Button
             title="Cancel"
             raised
             onPress={() => {
-              props.onTaskCreated()
+              if (props.onTaskCreated) {
+                props.onTaskCreated()
+              }
             }}
             titleStyle={{
               fontWeight: "bold",
@@ -248,7 +229,7 @@ export default function CreateTaskScreen(props) {
               borderWidth: 2,
               borderRadius: 20
             }}
-          />
+          /> */}
       </View>
 
       

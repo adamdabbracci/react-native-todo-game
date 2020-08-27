@@ -5,21 +5,24 @@ import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { withAuthenticator } from 'aws-amplify-react-native'
-
+// import { withAuthenticator } from './components/auth/authenticator'
+import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, SignIn, SignUp, VerifyContact, withAuthenticator } from 'aws-amplify-react-native';
 import BottomTabNavigator from './navigation/BottomTabNavigator';
 import useLinking from './navigation/useLinking';
 import { Amplify } from '@aws-amplify/core';
-import { Auth } from '@aws-amplify/auth';
 import awsconfig from './aws-exports';
-import { Icon, Button } from 'react-native-elements';
-import ManageTasksScreen from './screens/ManageTasksScreen';
+import { Text, Input } from 'react-native-elements';
+import { CustomSignIn } from './components/Authenticator';
 
-Amplify.configure(awsconfig);
-// Auth.configure({
-  
-// })
+Amplify.configure({
+  ...awsconfig,
+  Analytics: {
+    disabled: true,
+  },
+});
+
 const Stack = createStackNavigator();
+let navigation
 
 function App(props){
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
@@ -44,6 +47,7 @@ function App(props){
       } catch (e) {
         // We might want to provide this error information to an error reporting service
         console.warn(e);
+        console.log(props.navigation)
       } finally {
         setLoadingComplete(true);
         SplashScreen.hide();
@@ -90,4 +94,18 @@ const styles = StyleSheet.create({
 });
 
 
-export default withAuthenticator(App);
+
+export default withAuthenticator(App, false, [
+  <CustomSignIn onLoggedIn={() => { 
+    console.log("Logged in successfully. Redirecting to confirm sign in.")
+    
+   }}/>,
+  <ConfirmSignIn/>,
+  <VerifyContact/>,
+  <SignUp/>,
+  <ConfirmSignUp/>,
+  <ForgotPassword/>,
+  <RequireNewPassword />
+]);
+
+// export default withAuthenticator(App);

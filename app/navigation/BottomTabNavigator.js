@@ -7,6 +7,7 @@ import ProgressScreen from '../screens/ProgressScreen';
 import { Button } from 'react-native-elements';
 import AccountScreen from '../screens/AccountScreen';
 import ManageTasksScreens from './ManageTaskNavigator';
+import CoinStoreScreen from '../screens/CoinStoreScreen';
 
 const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = 'HomeScreen';
@@ -24,7 +25,7 @@ export default function BottomTabNavigator({ navigation, route }) {
         name="HomeScreen"
         component={HomeScreen}
         options={{
-          title:"My Tasks",
+          title:"My Chores",
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-code-working" />,
         }}
       />
@@ -39,13 +40,22 @@ export default function BottomTabNavigator({ navigation, route }) {
       />
 
       <BottomTab.Screen
+        name="CoinStoreScreen"
+        component={CoinStoreScreen}
+        options={{
+          title: 'Coin Store',
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} fam name="md-apps" />,
+        }}
+      />
+
+      {/* <BottomTab.Screen
         name="ProgresScreen"
         component={ProgressScreen}
         options={{
-          title: 'Rewards',
+          title: 'Challenges',
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
         }}
-      />
+      /> */}
       
       <BottomTab.Screen
         name="AccountScreen"

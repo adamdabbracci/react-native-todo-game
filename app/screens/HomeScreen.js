@@ -97,7 +97,6 @@ export default function HomeScreen({navigation}) {
       taskDetails: null,
       showTaskDetail: false,
     });
-    setCreateTaskOverlayVisible(false);
   }
   
   const buildRewardDetailElement = (coincount) => {

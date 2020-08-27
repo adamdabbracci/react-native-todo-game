@@ -20,7 +20,6 @@ export default function BankTopDisplayComponent(props) {
     //   })
     // }, []);
 
-    console.log(props.bank)
 
 
     return (
@@ -34,7 +33,7 @@ export default function BankTopDisplayComponent(props) {
               flexDirection: "column",
               paddingTop: 20,
               paddingBottom: 20,
-              flex: .5
+              flex: 1
             }}>
               <Icon
                 name="toll"
@@ -52,7 +51,7 @@ export default function BankTopDisplayComponent(props) {
     
             </View>
     
-            <View style={{
+            {/* <View style={{
               alignContent: "center",
               backgroundColor: "gold",
               flexDirection: "column",
@@ -75,7 +74,7 @@ export default function BankTopDisplayComponent(props) {
                 textAlign: "center",
                 }}>{props.bank.tickets} Tickets</Text>
     
-            </View>
+            </View> */}
           </View>
     )
             }

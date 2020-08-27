@@ -27,6 +27,8 @@ module.exports = class TaskService {
            }, 
         };
 
+        console.log(params)
+
         const results = await dynamodb.scan(params).promise();
         return results.Items;
       }
@@ -96,13 +98,12 @@ module.exports = class TaskService {
               id: element.id,
             },
           };
-          console.log("DELETE:")
+          console.log("DELETING INCOMPLETE TASK:")
           console.log(params);
           await dynamodb.delete(params).promise();
 
         }
       }
-
 
       // getAllByDate = async (date) => {
 

@@ -5,9 +5,11 @@ https://docs.expo.io
 # Features
 [X] Tasks
 
-[~] Task scheduler (working, just needs some additonal testing and verification)
+[x] Task scheduler
 
 [] Advance task schedling (like start/end date)
+
+[] Improve task scheduler's handling of existing tasks
 
 [] Real-time user provisioning
 
@@ -30,7 +32,7 @@ https://docs.expo.io
 `expo start` from within the `/app` directory
 
 ## Run the API locally
-1. Download nGrok and run `./ngrok http 80`
+1. Download nGrok and run `./ngrok http 3000`
 2. Update the app services file (APIConfiguration.js) to point to your pulic nGrok URL (i.e. http://e28721c126b9.ngrok.io)
 3. Run `sls offline start --stage dev`
 

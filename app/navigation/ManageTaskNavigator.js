@@ -15,13 +15,13 @@ export default function ManageTasksScreens() {
             }}/>
 
             <ManageTaskScreenStack.Screen name="ManageTaskScreen" component={ManageTaskScreen} options={{
-                title: "Manage Task",
+                title: "Manage Chore Schedules",
                 cardStyle: {
                     backgroundColor: "white"
                 }
             }}/>
 
-<ManageTaskScreenStack.Screen name="CreateTaskScreen" component={CreateTaskScreen} options={{
+        <ManageTaskScreenStack.Screen name="CreateTaskScreen" component={CreateTaskScreen} options={{
                 title: "Create Task",
                 cardStyle: {
                     backgroundColor: "white"
