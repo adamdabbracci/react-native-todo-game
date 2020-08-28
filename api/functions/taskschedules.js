@@ -20,6 +20,22 @@ module.exports.create = async (event, context) => {
   }
 };
 
+module.exports.update = async (event, context) => {
+  const createdBy = event.requestContext.authorizer.claims.sub;
+  let body = JSON.parse(event.body);
+  body.created_by = createdBy;
+  const id = event.pathParameters.id;
+  
+
+  
+  // fetch task from the database
+  const scheduled = await taskScheduleService.updateTaskSchedule(id, body);
+  return {
+    statusCode: 200,
+    body: JSON.stringify(scheduled)
+  }
+};
+
 module.exports.list = async (event, context) => {
   const userId = event.requestContext.authorizer.claims.sub;
   

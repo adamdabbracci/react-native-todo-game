@@ -13,7 +13,9 @@ https://docs.expo.io
 
 [] Real-time user provisioning
 
-[] Push notifications
+[x] Push notifications (setup in the app)
+
+[] Push notifications on backend
 
 [] "Parent" relationship to other accounts
 

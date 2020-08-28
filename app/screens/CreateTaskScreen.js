@@ -6,15 +6,16 @@ import { RectButton, ScrollView } from 'react-native-gesture-handler';
 import { Input, Button, ListItem, ButtonGroup } from 'react-native-elements';
 import TaskService from '../services/task.service';
 import { Task, TaskSchedule } from '../services/task.model';
-import RRuleService from '../services/rrule.service';
 
 const taskService = new TaskService();
-const rRuleService = new RRuleService();
 
 
 
 
 export default function CreateTaskScreen(props) {
+
+    const isEditingSchedule = (props.route.params?.schedule) ? true : false
+    console.log(`EDITING: ${isEditingSchedule}`)
 
     // Schedule options
     const scheduleOptions = {
@@ -30,9 +31,9 @@ export default function CreateTaskScreen(props) {
   }
 
     // Main Form
-    const [form, setForm] = React.useState(taskDefault);
-    const [schedule, setSchedule] = React.useState({
-      frequency: 0,
+    const [form, setForm] = React.useState((isEditingSchedule) ? props.route.params?.schedule?.task : taskDefault);
+    const [schedule, setSchedule] = React.useState((isEditingSchedule) ? props.route.params?.schedule : {
+      frequency: 0
     })
 
     // User List
@@ -59,7 +60,6 @@ export default function CreateTaskScreen(props) {
         task.description = form.description;
         task.name = form.name;
         task.requires_photo_proof = false;
-        console.log(task);
         
         // taskService.createTask(task);
 
@@ -80,19 +80,28 @@ export default function CreateTaskScreen(props) {
         const taskSchedule = new TaskSchedule();
           taskSchedule.task = task;
           taskSchedule.assigned_to = task.assigned_to;
-          taskSchedule.frequency = schedule;
+          taskSchedule.frequency = schedule.frequency;
           taskSchedule.start_date = moment();
           taskSchedule.end_date = moment().add(1, "year");
-          await taskService.createTaskSchedule(taskSchedule);
 
-        setCreatingTask(false);
-        setForm(taskDefault);
-        console.log(props)
-        if (props.onTaskCreated) {
-          props.onTaskCreated()
-        }
-        props.navigation.goBack();
-    }
+          if (isEditingSchedule) {
+            console.log(schedule.id)
+            taskSchedule.id = schedule.id;
+            await taskService.updateTaskSchedule(taskSchedule);
+          }
+          else {
+            await taskService.createTaskSchedule(taskSchedule);
+          }
+          
+
+          setCreatingTask(false);
+          setForm(taskDefault);
+
+          if (props.onTaskCreated) {
+            props.onTaskCreated()
+          }
+          props.navigation.goBack();
+      }
 
     const renderUserItem = ({item}) => {
       return (
@@ -113,9 +122,11 @@ export default function CreateTaskScreen(props) {
         <View>
           <ButtonGroup
           onPress={(selectedIndex) => {
-            setSchedule(scheduleOptions.frequency[selectedIndex])
+            setSchedule({
+              frequency: scheduleOptions.frequency[selectedIndex]
+            })
           }}
-          selectedIndex={scheduleOptions.frequency.indexOf(schedule)}
+          selectedIndex={scheduleOptions.frequency.indexOf(schedule.frequency)}
           buttons={scheduleOptions.frequency}
           containerStyle={{}}
         />
@@ -198,7 +209,7 @@ export default function CreateTaskScreen(props) {
           <Button
             title="Create"
             raised
-            disabled={creatingTask}
+            disabled={creatingTask || !assignedUser || !schedule.frequency || !form.description || !form.name}
             titleStyle={{
               fontWeight: "bold",
             }}

@@ -112,6 +112,14 @@ functions:
           method: post
           cors: true
 
+  updateSchedule:
+    handler: functions/taskschedules.update
+    events:
+      - http:
+          path: schedules/{id}
+          method: post
+          cors: true
+
   getTasksBySchedule:
     handler: functions/taskschedules.listTasksFromSchedule
     events:

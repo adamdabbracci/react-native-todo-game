@@ -114,4 +114,69 @@ module.exports = class TaskScheduleService {
         throw new Error(ex);
       }
     }
+
+    updateTaskSchedule = async (id, _taskSchedule) => {
+
+      console.log(`UPDATING ${id}`)
+      
+      const startMoment =  moment(_taskSchedule.start_date).utc().startOf("day");
+      const endMoment = moment(_taskSchedule.end_date).utc().endOf("day");
+
+        // Build an rRule string: http://jakubroztocil.github.io/rrule/
+      const newRRule = new rrule.RRule({
+        dtstart: startMoment.toDate(),
+        until: endMoment.toDate(),
+        freq: rrule.RRule[_taskSchedule.frequency],
+      });
+
+      try {
+        const taskSchedule = Object.assign(new TaskSchedule(), _taskSchedule);
+        taskSchedule.id = id;
+        taskSchedule.start_date = startMoment.unix();
+        taskSchedule.start_date_string = startMoment.toISOString();
+        taskSchedule.end_date = endMoment.unix();
+        taskSchedule.end_date_string = endMoment.toISOString();
+        taskSchedule.rrule = newRRule.toString();
+        taskSchedule.task = {
+          name: _taskSchedule.task.name,
+          description: _taskSchedule.task.description,
+          assigned_to: _taskSchedule.task.assigned_to,
+        }
+
+        const timestamp = new Date().getTime();
+        
+        const params = {
+          TableName: process.env.TASK_SCHEDULES_TABLE,
+          Key: {
+            id,
+          },
+          Item: {
+            ...taskSchedule,
+            updated_at: timestamp,
+          },
+          UpdateExpression: "set frequency = :frequency, #taskName = :taskName, task.description = :taskDescription, task.assigned_to = :assignedTo, rrule = :rrule",
+          ExpressionAttributeValues:{
+              ":frequency": taskSchedule.frequency,
+              ":assignedTo": taskSchedule.assigned_to,
+              ":rrule": taskSchedule.rrule,
+              ":taskName": taskSchedule.task.name,
+              ":taskDescription": taskSchedule.task.description
+          },
+          ExpressionAttributeNames: {
+            "#taskName": "task.name"
+          },
+          ReturnValues:"UPDATED_NEW"
+        };
+
+        // write the task to the database
+        console.log(params)
+        const result = await dynamodb.update(params).promise();
+        return result;
+      }
+
+      catch (ex) {
+        console.log(ex)
+        throw new Error(ex);
+      }
+    }
 }

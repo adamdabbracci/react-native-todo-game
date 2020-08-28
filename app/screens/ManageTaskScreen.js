@@ -4,7 +4,6 @@ import { View, Text, ScrollView, RefreshControl, Switch} from 'react-native';
 import * as styles from '../styles'
 import { Button, Icon, withTheme, ListItem, Overlay } from 'react-native-elements';
 import TaskService from '../services/task.service';
-import rrule from "rrule";
 
 const taskService = new TaskService();
 
@@ -12,14 +11,12 @@ export default function ManageTaskScreen(props) {
     
     const [schedule, setSchedule] = React.useState(props.route.params.schedule);
     const [tasks, setTasks] = React.useState([]);
-    console.log(schedule)
 
     React.useEffect(() => {
         let isSub = true;
         if (isSub) {
             taskService.getTasksCreatedBySchedule(schedule.id)
             .then((tasks) => {
-                console.log(tasks);
                 setTasks(tasks);
             })
             .catch((ex) => {
@@ -36,7 +33,7 @@ export default function ManageTaskScreen(props) {
         }}>
 
             <View style={{ flexDirection: "row", justifyContent: "space-between"}}>
-                <View style={{flexDirection: "column", justifyContent: "space-between"}}>
+                <View style={{flexDirection: "column"}}>
                     <Text style={{
                         fontSize: 16,
                         fontWeight: "700",
@@ -62,10 +59,32 @@ export default function ManageTaskScreen(props) {
                         fontSize: 12,
                         fontWeight: "500",
                     }}>
-                        {rrule.fromString(schedule.rrule).toText()}
+                        {schedule.frequency} from {moment.unix(schedule.start_date).format('LL')} to {moment.unix(schedule.end_date).format('LL')}
                         </Text>
 
                 </View>
+
+                <Button
+                title={`Edit ${schedule.id}`}
+                type="solid"
+                
+                buttonStyle={{
+                    backgroundColor: "gold",
+                    borderColor: "white",
+                    borderRadius: 10,
+                    borderWidth: 2,
+                }}
+                titleStyle={{
+                    color: "white",
+                    fontWeight: "700"
+                }}
+
+                onPress={() => {
+                    props.navigation.navigate('CreateTaskScreen', {
+                        schedule,
+                    })
+                }}
+            />
 
                 {/* <Switch
                     trackColor={{ true: "gold" }}
@@ -105,7 +124,7 @@ export default function ManageTaskScreen(props) {
                     tasks.map((task, i) => (
                         <ListItem
                             key={i}
-                            checkBox={task.completed}
+                            checkmark={task.completed}
                             title={moment(task.created_at).format("l")}
                             bottomDivider
                             onPress={() => {
@@ -117,6 +136,8 @@ export default function ManageTaskScreen(props) {
                     ))
                 }
             </View>
+
+            
 
         </View>
 

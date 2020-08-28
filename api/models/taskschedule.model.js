@@ -52,7 +52,7 @@ module.exports = class TaskSchedule {
     frequency;
 
     /**
-     * The RRule string reprsenting the frequency
+     * The RRule string, used for calculations
      *
      * @memberof TaskSchedule
      */

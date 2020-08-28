@@ -91,6 +91,19 @@ export default class TaskService {
       });
   }
 
+  updateTaskSchedule = async (taskSchedule) => {    
+    return fetch(`${apiPath}/schedules/${taskSchedule.id}`, {
+        method: 'POST',
+        headers: await this.getHeaders(),
+        body: JSON.stringify(taskSchedule)
+      })
+      
+    .then((response) => response.json())
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
     completeTask = async (task) => {   
         return fetch(`${apiPath}/tasks/${task.id}/complete`, {
             method: 'PUT',

@@ -98,26 +98,6 @@ export default function AccountScreen(props) {
            }}>
            {renderAccountButton()}
 
-           <Button
-                title="Enable Push Notiifcations"
-                type="solid"
-                raised={true}
-                
-                buttonStyle={{
-                    backgroundColor: "gold",
-                    borderColor: "white",
-                    borderRadius: 10,
-                    borderWidth: 2,
-                }}
-                titleStyle={{
-                    color: "white",
-                    fontWeight: "700"
-                }}
-
-                onPress={() => {
-                    pushService.registerForPushNotificationsAsync()
-                }}
-            />
            </View>
            
         </View>
