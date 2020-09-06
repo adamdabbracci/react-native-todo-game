@@ -10,7 +10,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import TaskDetailsScreen from './TaskDetailsScreen';
 import BottyChatComponent from '../components/BottyChatComponent';
 import BankTopDisplayComponent from '../components/BankTopDisplay';
-import CreateTaskScreen from './CreateTaskScreen';
+import EditScheduleScreen from './EditScheduleScreen';
 import HapticService from '../services/haptic.service';
 import Bank from '../services/bank.model';
 import CurrentUserService from '../services/currentuser.service';

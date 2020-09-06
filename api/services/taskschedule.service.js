@@ -137,11 +137,8 @@ module.exports = class TaskScheduleService {
         taskSchedule.end_date = endMoment.unix();
         taskSchedule.end_date_string = endMoment.toISOString();
         taskSchedule.rrule = newRRule.toString();
-        taskSchedule.task = {
-          name: _taskSchedule.task.name,
-          description: _taskSchedule.task.description,
-          assigned_to: _taskSchedule.task.assigned_to,
-        }
+        taskSchedule.frequency = _taskSchedule.frequency;
+        taskSchedule.task = Object.assign({}, _taskSchedule.task)
 
         const timestamp = new Date().getTime();
         
@@ -154,16 +151,11 @@ module.exports = class TaskScheduleService {
             ...taskSchedule,
             updated_at: timestamp,
           },
-          UpdateExpression: "set frequency = :frequency, #taskName = :taskName, task.description = :taskDescription, task.assigned_to = :assignedTo, rrule = :rrule",
+          UpdateExpression: "set frequency = :frequency, task = :task, rrule = :rrule",
           ExpressionAttributeValues:{
               ":frequency": taskSchedule.frequency,
-              ":assignedTo": taskSchedule.assigned_to,
               ":rrule": taskSchedule.rrule,
-              ":taskName": taskSchedule.task.name,
-              ":taskDescription": taskSchedule.task.description
-          },
-          ExpressionAttributeNames: {
-            "#taskName": "task.name"
+              ":task": taskSchedule.task,
           },
           ReturnValues:"UPDATED_NEW"
         };

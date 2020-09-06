@@ -69,6 +69,7 @@ export default class TaskService {
   }
 
   getTasksCreatedBySchedule = async (scheduleId) => {
+    console.log(`Getting tasks for schedule ${scheduleId}`)
     return fetch(`${apiPath}/schedules/${scheduleId}/tasks`, {
       headers: await this.getHeaders(),
     })

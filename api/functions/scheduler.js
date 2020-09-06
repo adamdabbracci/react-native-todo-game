@@ -37,7 +37,7 @@ module.exports.scheduleTodaysTasks = async (event, context) => {
       if (doesMatchToday) {
         let task = new Task();
         task = schedule.task;
-        task.assigned_to = schedule.assigned_to;
+        task.assigned_to = schedule.task.assigned_to;
         task.created_by = schedule.created_by;
         task.schedule_id = schedule.id;
         task.assigned_date = startDateMoment.format("MM-DD-YYYY");

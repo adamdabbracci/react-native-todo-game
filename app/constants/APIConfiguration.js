@@ -1,7 +1,7 @@
 export class APIConfiguration {
     getApiHost = () => {
         if (__DEV__) {
-            return "https://c3809cc1440b.ngrok.io";
+            return "http://6d7535b022fa.ngrok.io";
         }
         else {
             return "https://prod.myap.com";

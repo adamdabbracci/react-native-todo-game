@@ -7,7 +7,7 @@ import TaskService from '../services/task.service';
 
 const taskService = new TaskService();
 
-export default function ManageTaskScreen(props) {
+export default function ScheduleDetailsScreen(props) {
     
     const [schedule, setSchedule] = React.useState(props.route.params.schedule);
     const [tasks, setTasks] = React.useState([]);
@@ -15,17 +15,20 @@ export default function ManageTaskScreen(props) {
     React.useEffect(() => {
         let isSub = true;
         if (isSub) {
-            taskService.getTasksCreatedBySchedule(schedule.id)
-            .then((tasks) => {
-                setTasks(tasks);
-            })
-            .catch((ex) => {
-                console.log(ex)
-            })
+            loadScheduleDetails()
         }
         return () => isSub = false;
     }, [true])
 
+    const loadScheduleDetails = () => {
+        return taskService.getTasksCreatedBySchedule(schedule.id)
+        .then((tasks) => {
+            setTasks(tasks);
+        })
+        .catch((ex) => {
+            console.log(ex)
+        })
+    }
     return (
         <View style={{
             padding: 20,
@@ -65,7 +68,7 @@ export default function ManageTaskScreen(props) {
                 </View>
 
                 <Button
-                title={`Edit ${schedule.id}`}
+                title={`Edit`}
                 type="solid"
                 
                 buttonStyle={{
@@ -80,8 +83,11 @@ export default function ManageTaskScreen(props) {
                 }}
 
                 onPress={() => {
-                    props.navigation.navigate('CreateTaskScreen', {
+                    props.navigation.navigate('EditScheduleScreen', {
                         schedule,
+                        onSave: () => {
+                            loadScheduleDetails()
+                        }
                     })
                 }}
             />

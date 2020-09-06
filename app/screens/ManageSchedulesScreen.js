@@ -3,11 +3,11 @@ import { View, Text, ScrollView, RefreshControl} from 'react-native';
 import * as styles from '../styles'
 import { Button, Icon, withTheme, ListItem, Overlay } from 'react-native-elements';
 import TaskService from '../services/task.service';
-import CreateTaskScreen from './CreateTaskScreen';
+import EditScheduleScreen from './EditScheduleScreen';
 
 const taskService = new TaskService();
 
-export default function ManageTasksScreen(props) {
+export default function ManageSchedulesScreen(props) {
 
   const [createTaskOverlayVisible, setCreateTaskOverlayVisible] = React.useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -45,6 +45,7 @@ export default function ManageTasksScreen(props) {
     }, [true])
 
     async function fetchData() {
+        console.log(`Fetching schedule list`)
         let promises = [
             // taskService.getCreatedTasks().then((tasks) => {
             //     setTasks(tasks);
@@ -97,7 +98,11 @@ export default function ManageTasksScreen(props) {
                     type="font-awesome"
                     color="white"
                     onPress={() => {
-                        props.navigation.navigate('CreateTaskScreen')
+                        props.navigation.navigate('EditScheduleScreen', {
+                            onSave: () => {
+                                fetchData()
+                            }
+                        })
                     }}
                     />  
             </View>
@@ -119,7 +124,7 @@ export default function ManageTasksScreen(props) {
                             subtitle={schedule.frequency}
                             bottomDivider
                             onPress={() => {
-                                props.navigation.navigate('ManageTaskScreen', {
+                                props.navigation.navigate('ScheduleDetailsScreen', {
                                     schedule: schedule
                                 })
                             }}
@@ -135,9 +140,9 @@ export default function ManageTasksScreen(props) {
         height: "99%",
         backgroundColor: "transparent",
       }}>
-                <CreateTaskScreen onTaskCreated={() => {
+                <EditScheduleScreen onTaskCreated={() => {
                   setCreateTaskOverlayVisible(false)
-                }}></CreateTaskScreen>
+                }}></EditScheduleScreen>
 
       </Overlay>
 

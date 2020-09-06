@@ -1,22 +1,22 @@
 import * as React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import ManageTasksScreen from '../screens/ManageTasksScreen';
-import ManageTaskScreen from '../screens/ManageTaskScreen';
-import CreateTaskScreen from '../screens/CreateTaskScreen';
+import ManageSchedulesScreen from '../screens/ManageSchedulesScreen';
+import ScheduleDetailsScreen from '../screens/ScheduleDetailsScreen';
+import EditScheduleScreen from '../screens/EditScheduleScreen';
 import { Button } from 'react-native';
 
 
 const ManageTaskScreenStack = createStackNavigator();
-
 export default function ManageTasksScreens({navigation}) {
 
     return (
         <ManageTaskScreenStack.Navigator>
-            <ManageTaskScreenStack.Screen name="ManageTasksScreen" component={ManageTasksScreen} options={{
+            <ManageTaskScreenStack.Screen name="ManageSchedulesScreen" component={ManageSchedulesScreen} options={{
                 headerShown: false,
+
             }}/>
 
-            <ManageTaskScreenStack.Screen name="ManageTaskScreen" component={ManageTaskScreen} options={{
+            <ManageTaskScreenStack.Screen name="ScheduleDetailsScreen" component={ScheduleDetailsScreen} options={{
                 title: "Manage Schedule",
                 cardStyle: {
                     backgroundColor: "white"
@@ -27,7 +27,7 @@ export default function ManageTasksScreens({navigation}) {
                 // headerRight: () => (
                 //     <Button
                 //       onPress={() => {
-                //         navigation.navigate('CreateTaskScreen')
+                //         navigation.navigate('EditScheduleScreen')
                 //       }}
                 //       title="Edit"
                 //     />
@@ -35,7 +35,7 @@ export default function ManageTasksScreens({navigation}) {
                 
             }}/>
 
-        <ManageTaskScreenStack.Screen name="CreateTaskScreen" component={CreateTaskScreen} options={{
+        <ManageTaskScreenStack.Screen name="EditScheduleScreen" component={EditScheduleScreen} options={{
                 cardStyle: {
                     backgroundColor: "white"
                 },

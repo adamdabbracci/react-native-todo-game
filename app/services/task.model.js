@@ -35,12 +35,6 @@ export class TaskSchedule {
     created_by;
 
     /**
-     * The user ID the task will be assigned to
-     *
-     */
-    assigned_to;
-
-    /**
      * The bones of the task object that will be created
      *
      * @memberof TaskSchedule
