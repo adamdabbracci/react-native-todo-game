@@ -1,28 +1,38 @@
-const dynamodb = require('../functions/dynamodb');
-const uuid = require('uuid');
 const moment = require("moment");
 const rrule = require("rrule");
-const TaskSchedule = require("../models/taskschedule.model");
+const { Op, Schedule, Task } = require("./database.service");
 
 module.exports = class TaskScheduleService {
     getTaskSchedule = async (id) => {
-        const params = {
-          TableName: process.env.TASK_SCHEDULES_TABLE,
-          Key: {
-            id: id,
-          },
-        };
+        return Schedule.findByPk(id)
+      }
 
-        const results = await dynamodb.get(params).promise();
-
-        return results.Item;
+      createBulkTasks = async (tasks) => {
+        console.log(tasks)
+        return Task.bulkCreate(tasks)
       }
 
      /**
       * Returns all schedules that meet a given date
       *
       */
-     getActiveSchedulesForDate = async (date) => {
+     getActiveSchedulesForDate = async (dateAsMoment) => {
+
+      console.log(dateAsMoment.unix())
+
+        return Schedule.findAll({
+          where: {
+            [Op.or]: {
+              start_date: {
+                [Op.lt]: dateAsMoment.unix(),
+              },
+              end_date: {
+                [Op.gt]: dateAsMoment.unix(),
+              }
+            }
+            
+          }
+        })
 
         const params = {
           TableName: process.env.TASK_SCHEDULES_TABLE,
@@ -39,34 +49,19 @@ module.exports = class TaskScheduleService {
       }
 
       getTaskSchedulesByCreator = async (userId) => {
-        const params = {
-          TableName: process.env.TASK_SCHEDULES_TABLE,
-         
-           FilterExpression: "created_by = :userId", 
-           ExpressionAttributeValues: {
-            ':userId': userId,
-           }, 
-        };
-      
-
-        const results = await dynamodb.scan(params).promise();
-
-        return results.Items;
+        return Schedule.findAll({
+          where: {
+            created_by: userId
+          }
+        })
       }
 
       getTaskSchedulesByAssignedTo = async (userId) => {
-        const params = {
-          TableName: process.env.TASK_SCHEDULES_TABLE,
-         
-           FilterExpression: "assigned_to = :userId", 
-           ExpressionAttributeValues: {
-            ':userId': userId,
-           }, 
-        };
-
-        const results = await dynamodb.scan(params).promise();
-
-        return results.Items;
+        return Schedule.findAll({
+          where: {
+            assigned_to: userId
+          }
+        })
       }
     
 
@@ -75,6 +70,7 @@ module.exports = class TaskScheduleService {
       
       const startMoment =  moment(_taskSchedule.start_date).utc().startOf("day");
       const endMoment = moment(_taskSchedule.end_date).utc().endOf("day");
+
 
         // Build an rRule string: http://jakubroztocil.github.io/rrule/
       const newRRule = new rrule.RRule({
@@ -85,28 +81,13 @@ module.exports = class TaskScheduleService {
 
       try {
         const taskSchedule = Object.assign(new TaskSchedule(), _taskSchedule);
-        taskSchedule.id = uuid.v4();
-        taskSchedule.start_date = startMoment.unix();
+        taskSchedule.start_date = startMoment.toDate();
         taskSchedule.start_date_string = startMoment.toISOString();
-        taskSchedule.end_date = endMoment.unix();
+        taskSchedule.end_date = endMoment.toDate();
         taskSchedule.end_date_string = endMoment.toISOString();
         taskSchedule.rrule = newRRule.toString();
-
-        const timestamp = new Date().getTime();
-        
-        const params = {
-          TableName: process.env.TASK_SCHEDULES_TABLE,
-          Item: {
-            ...taskSchedule,
-            created_at: timestamp,
-            updated_at: timestamp,
-          },
-        };
-
-        // write the task to the database
-        console.log(params)
-        const result = await dynamodb.put(params).promise();
-        return result;
+        console.log(taskSchedule)
+        return Schedule.create(taskSchedule)
       }
 
       catch (ex) {
@@ -131,39 +112,21 @@ module.exports = class TaskScheduleService {
 
       try {
         const taskSchedule = Object.assign(new TaskSchedule(), _taskSchedule);
-        taskSchedule.id = id;
-        taskSchedule.start_date = startMoment.unix();
+        taskSchedule.start_date = startMoment.toDate();
         taskSchedule.start_date_string = startMoment.toISOString();
-        taskSchedule.end_date = endMoment.unix();
+        taskSchedule.end_date = endMoment.toDate();
         taskSchedule.end_date_string = endMoment.toISOString();
         taskSchedule.rrule = newRRule.toString();
         taskSchedule.frequency = _taskSchedule.frequency;
         taskSchedule.task = Object.assign({}, _taskSchedule.task)
 
-        const timestamp = new Date().getTime();
-        
-        const params = {
-          TableName: process.env.TASK_SCHEDULES_TABLE,
-          Key: {
-            id,
-          },
-          Item: {
-            ...taskSchedule,
-            updated_at: timestamp,
-          },
-          UpdateExpression: "set frequency = :frequency, task = :task, rrule = :rrule",
-          ExpressionAttributeValues:{
-              ":frequency": taskSchedule.frequency,
-              ":rrule": taskSchedule.rrule,
-              ":task": taskSchedule.task,
-          },
-          ReturnValues:"UPDATED_NEW"
-        };
+        await Schedule.update(taskSchedule, {
+          where: {
+            id: id
+          }
+        })
 
-        // write the task to the database
-        console.log(params)
-        const result = await dynamodb.update(params).promise();
-        return result;
+        return Schedule.findByPk(id)
       }
 
       catch (ex) {

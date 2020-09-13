@@ -1,8 +1,8 @@
 const TaskScheduleService = require('../services/taskschedule.service');
 const TaskService = require('../services/task.service');
-const Task = require('../models/task.model');
 const taskScheduleService = new TaskScheduleService();
 const taskService = new TaskService();
+const task = new TaskService();
 
 const moment = require("moment");
 const rrule = require("rrule");
@@ -11,7 +11,7 @@ const rrule = require("rrule");
 module.exports.scheduleTodaysTasks = async (event, context) => {
     const startDateMoment = moment().utc().startOf("day");
     console.log(`Generating tasks for ${startDateMoment.toString()}`)
-    const activeSchedules = await taskScheduleService.getActiveSchedulesForDate(startDateMoment.unix());
+    const activeSchedules = await taskScheduleService.getActiveSchedulesForDate(startDateMoment);
 
     console.log("Active schedules for the date:")
     console.log(activeSchedules)
@@ -35,9 +35,12 @@ module.exports.scheduleTodaysTasks = async (event, context) => {
 
       // If it matches, generate a new task
       if (doesMatchToday) {
-        let task = new Task();
-        task = schedule.task;
-        task.assigned_to = schedule.task.assigned_to;
+        let task = {}
+        task.assigned_to = schedule.assigned_to;
+        task.name = schedule.name;
+        task.description = schedule.description;
+        task.coin_reward = schedule.coin_reward;
+        task.status = "Assigned";
         task.created_by = schedule.created_by;
         task.schedule_id = schedule.id;
         task.assigned_date = startDateMoment.format("MM-DD-YYYY");
@@ -49,16 +52,13 @@ module.exports.scheduleTodaysTasks = async (event, context) => {
 
     })
 
-    for (let index = 0; index < tasksToSchedule.length; index++) {
-      const thisTask = tasksToSchedule[index];
-      // Delete any tasks that were already scheduled for this schedule
-      await taskService.deleteIncompleteTasksByScheduleId(thisTask.schedule_id);
-      await taskService.createTask(thisTask);
+    const scheduleIds = activeSchedules.map(x => x.id)
+
+
+    try {
+      const success = await taskScheduleService.createBulkTasks(tasksToSchedule)
+      console.log("DONE!")
+    } catch(ex) {
+      console.log(ex)
     }
-
-
-    return {
-        statusCode: 200,
-        body: JSON.stringify(activeSchedules)
-      }
 }

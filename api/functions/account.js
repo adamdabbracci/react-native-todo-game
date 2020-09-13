@@ -6,7 +6,6 @@ const UserService = require('../services/user.service');
 const userService = new UserService();
 
 module.exports.getAccount = async (event, context) => {
-
   const userId = event.requestContext.authorizer.claims.sub;
 
   // fetch task from the database

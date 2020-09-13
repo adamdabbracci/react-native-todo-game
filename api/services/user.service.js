@@ -1,45 +1,93 @@
 const dynamodb = require('../functions/dynamodb');
 const cognito = require('../functions/cognito');
-
+const { User } = require('./database.service')
 
 module.exports = class UserService {
-    getUser = async (userId) => {
-        const params = {
-          TableName: process.env.USERS_TABLE,
-          Key: {
-            id: userId,
-          },
-        };
-
-      console.log(params)
-
-
-        const results = await dynamodb.get(params).promise();
-
-        // Create one if it doesn't exist
-        if (!results.Item) {
-          console.log(`USER ${userId} NOT FOUND, CREATING`);
+    createUser = async (userId) => {
           const getConfig = {
             Username: userId,
             UserPoolId: process.env.COGNITO_POOL_ID
           };
-          console.log(getConfig)
+      const cognitoUser = await cognito.identityServiceProvider.adminGetUser(getConfig).promise()
 
-          const cognitoUser = await cognito.identityServiceProvider.adminGetUser(getConfig).promise();
-          console.log(cognitoUser)
+      if (!cognitoUser) {
+        console.log(`No cognito user found for ID ${userId}`)
+        throw (`Invalid user ID`)
+      }
 
-
-          await this.createUser({
-            id: userId,
-            email_address: cognitoUser.UserAttributes.find(x => x.Name === 'email').Value,
-          });
-
-          const newUser = await dynamodb.get(params).promise();
-          return newUser.Item;
+        const user = {
+          id: cognitoUser.UserAttributes.find(x => x.Name === 'sub').Value,
+          email_address: cognitoUser.UserAttributes.find(x => x.Name === 'email').Value,
+          coins: 0,
         }
+        console.log("CREATING USER:")
+        console.log(user)
+        return User.create(user);
+    }
+    getUser = async (userId) => {
+      try {
+        const user =  await User.findOne({
+          where: {
+            id: userId
+          }
+        })
+
+        if (user) {
+          return user
+        } 
         else {
-          return results.Item;
+          // Creat it
+          await this.createUser(userId)
+          // Query it
+          return User.findOne({
+            where: {
+              id: userId
+            }
+          })
         }
+        
+      } catch(ex) {
+        console.log(ex);
+        throw ex
+      }
+
+      // console.log(db)
+      //   const params = {
+      //     TableName: process.env.USERS_TABLE,
+      //     Key: {
+      //       id: userId,
+      //     },
+      //   };
+
+      // console.log(params)
+
+
+      //   const results = await dynamodb.get(params).promise();
+
+      //   // Create one if it doesn't exist
+      //   if (!results.Item) {
+      //     console.log(`USER ${userId} NOT FOUND, CREATING`);
+      //     const getConfig = {
+      //       Username: userId,
+      //       UserPoolId: process.env.COGNITO_POOL_ID
+      //     };
+      //     console.log(getConfig)
+
+      //     const cognitoUser = await cognito.identityServiceProvider.adminGetUser(getConfig).promise();
+      //     console.log(cognitoUser)
+
+
+      //     await this.createUser({
+      //       id: userId,
+      //       email_address: cognitoUser.UserAttributes.find(x => x.Name === 'email').Value,
+      //     });
+
+      //     const newUser = await dynamodb.get(params).promise();
+      //     return newUser.Item;
+      //   }
+      //   else {
+      //     return results.Item;
+      //   }
         
       }
 
@@ -53,21 +101,6 @@ module.exports = class UserService {
         return results.Items;
         
       }
-    
-      createUser = async (user) => {
-        const params = {
-          TableName: process.env.USERS_TABLE,
-          Item: {
-            id: user.id,
-            email_address: user.email_address,
-            coins: 50,
-            tickets: 1,
-          }
-        };
-    
-        return dynamodb.put(params).promise();
-      }
-    
     
       updateUser = async (user) => {
         const params = {

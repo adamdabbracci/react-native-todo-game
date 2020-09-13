@@ -40,7 +40,11 @@ export default function HomeScreen({navigation}) {
         coins: account.coins,
         tickets: account.tickets,
       });
-    });
+    })
+    .catch((ex) =>{
+      console.log(ex)
+      alert("Failed to get account")
+    })
   }
 
   async function fetchData() {
