@@ -21,11 +21,14 @@ export default function ScheduleDetailsScreen(props) {
     }, [true])
 
     const loadScheduleDetails = () => {
-        return taskService.getTasksCreatedBySchedule(schedule.id)
-        .then((tasks) => {
-            setTasks(tasks);
+
+        return taskService.getSchedule(schedule.id)
+        .then((schedule) => {
+            setSchedule(schedule)
+            setTasks(schedule.tasks);
         })
         .catch((ex) => {
+            console.log("Failed to load schedule defualts:")
             console.log(ex)
         })
     }
@@ -41,28 +44,28 @@ export default function ScheduleDetailsScreen(props) {
                         fontSize: 16,
                         fontWeight: "700",
                     }}>
-                        {schedule.task.name}
+                        {schedule.name}
                         </Text>
 
                         <Text style={{
                         fontSize: 12,
                         fontWeight: "500",
                     }}>
-                        {schedule.task.description}
+                        {schedule.description}
                         </Text>
 
                         <Text style={{
                         fontSize: 12,
                         fontWeight: "500",
                     }}>
-                        {schedule.task.assigned_to}
+                        {schedule.assigned_to}
                         </Text>
 
                         <Text style={{
                         fontSize: 12,
                         fontWeight: "500",
                     }}>
-                        {schedule.frequency} from {moment.unix(schedule.start_date).format('LL')} to {moment.unix(schedule.end_date).format('LL')}
+                        {schedule.frequency} from {moment(schedule.start_date).format('LL')} to {moment(schedule.end_date).format('LL')}
                         </Text>
 
                 </View>

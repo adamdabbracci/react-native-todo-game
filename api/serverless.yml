@@ -120,11 +120,11 @@ functions:
           method: post
           cors: true
 
-  getTasksBySchedule:
-    handler: functions/taskschedules.listTasksFromSchedule
+  getSchedule:
+    handler: functions/taskschedules.get
     events:
       - http:
-          path: schedules/{id}/tasks
+          path: schedules/{id}
           method: get
           cors: true
   # /users
@@ -144,12 +144,24 @@ functions:
           path: account
           method: get
           cors: true
+  getBank:
+    handler: functions/account.getBank
+    events:
+      - http:
+          path: account/bank
+          method: get
+          cors: true
 
 
   # task scheduler (runs every hour)
   scheduleTodaysTasks:
     handler: functions/scheduler.scheduleTodaysTasks
     schedule: rate(1 hour)
+
+
+  # syncs database tables
+  syncDatabase:
+    handler: services/database.service.syncDb
 
 resources:
   Resources:

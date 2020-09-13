@@ -29,6 +29,17 @@ export default class CurrentUserService {
             console.log(error);
           });
     }
+
+    getBank = async () => {
+        return fetch(`${apiPath}/account/bank`, {
+            headers: await this.getHeaders(),
+          })
+          .then((response) => response.json())
+          .catch((error) => {
+              console.log("Failed to get bank:")
+            console.log(error);
+          });
+    }
     getAccessToken = async () => {
         try {
             const session = await Auth.currentSession();

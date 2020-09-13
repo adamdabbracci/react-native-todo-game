@@ -36,7 +36,7 @@ export default function EditScheduleScreen(props) {
     // User List
     const [hasLoadedUsers, setHasLoadedUsers] = React.useState(false);
     const [userList, setUserList] = React.useState([]);
-    const [assignedUser, setAssignedUser] = React.useState((props.route.params?.schedule?.task?.assigned_to || null));
+    const [assignedUser, setAssignedUser] = React.useState((props.route.params?.schedule?.assigned_to || null));
 
     // Toggles the button
     const [creatingTask, setCreatingTask] = React.useState(false);
@@ -51,19 +51,15 @@ export default function EditScheduleScreen(props) {
     const submitForm = async () => {
         setCreatingTask(true);
 
-        // Pull out the users to assign it to
-        const task = new Task();
-        task.assigned_to = assignedUser;
-        task.coin_reward = form.coin_reward;
-        task.description = form.description;
-        task.name = form.name;
-        task.requires_photo_proof = false;
-
         const taskSchedule = new TaskSchedule();
-        taskSchedule.task = task;
+        taskSchedule.description = form.description;
+        taskSchedule.coin_reward = form.coin_reward;
+        taskSchedule.assigned_to = assignedUser;
         taskSchedule.frequency = form.frequency;
         taskSchedule.start_date = form.start_date;
         taskSchedule.end_date = form.end_date;
+        taskSchedule.name = form.name;
+        taskSchedule.description = form.description;
 
         if (isEditingSchedule) {
           console.log(`Sending update for: ${props.route.params?.schedule?.id}`)
@@ -105,7 +101,7 @@ export default function EditScheduleScreen(props) {
       
       if (isEditingSchedule) {
         setForm({
-          ...props.route.params?.schedule?.task,
+          ...props.route.params?.schedule,
           frequency: props.route.params?.schedule?.frequency,
         })
       }

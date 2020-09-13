@@ -43,7 +43,7 @@ module.exports.scheduleTodaysTasks = async (event, context) => {
         task.status = "Assigned";
         task.created_by = schedule.created_by;
         task.schedule_id = schedule.id;
-        task.assigned_date = startDateMoment.format("MM-DD-YYYY");
+        task.assigned_date = startDateMoment.toDate();
         console.log("CREATING TASK:")
         console.log(task);
         tasksToSchedule.push(task);
@@ -57,7 +57,6 @@ module.exports.scheduleTodaysTasks = async (event, context) => {
 
     try {
       const success = await taskScheduleService.createBulkTasks(tasksToSchedule)
-      console.log("DONE!")
     } catch(ex) {
       console.log(ex)
     }

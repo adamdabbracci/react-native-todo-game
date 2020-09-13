@@ -2,14 +2,29 @@ const moment = require("moment");
 const rrule = require("rrule");
 const { Op, Schedule, Task } = require("./database.service");
 
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
+}
+
 module.exports = class TaskScheduleService {
     getTaskSchedule = async (id) => {
-        return Schedule.findByPk(id)
+        return Schedule.findByPk(id, {
+          include: [Task]
+        })
       }
 
       createBulkTasks = async (tasks) => {
-        console.log(tasks)
-        return Task.bulkCreate(tasks)
+        await asyncForEach(tasks, async (task) => {
+          try {
+            return Task.create(task)
+          }
+          catch(ex) {
+            console.log(`Task for schedule ${task.schedule_id} failed:`)
+            console.log(ex)
+          }
+        })
       }
 
      /**
@@ -80,18 +95,18 @@ module.exports = class TaskScheduleService {
       });
 
       try {
-        const taskSchedule = Object.assign(new TaskSchedule(), _taskSchedule);
+        const taskSchedule = Object.assign({}, _taskSchedule);
         taskSchedule.start_date = startMoment.toDate();
         taskSchedule.start_date_string = startMoment.toISOString();
         taskSchedule.end_date = endMoment.toDate();
         taskSchedule.end_date_string = endMoment.toISOString();
         taskSchedule.rrule = newRRule.toString();
-        console.log(taskSchedule)
         return Schedule.create(taskSchedule)
       }
 
       catch (ex) {
-        console.log(ex)
+        console.log("Failed to create schedule:")
+        console.log(ex.errors)
         throw new Error(ex);
       }
     }
@@ -111,14 +126,15 @@ module.exports = class TaskScheduleService {
       });
 
       try {
-        const taskSchedule = Object.assign(new TaskSchedule(), _taskSchedule);
+        const taskSchedule = Object.assign({}, _taskSchedule);
         taskSchedule.start_date = startMoment.toDate();
         taskSchedule.start_date_string = startMoment.toISOString();
         taskSchedule.end_date = endMoment.toDate();
         taskSchedule.end_date_string = endMoment.toISOString();
         taskSchedule.rrule = newRRule.toString();
         taskSchedule.frequency = _taskSchedule.frequency;
-        taskSchedule.task = Object.assign({}, _taskSchedule.task)
+
+        console.log(taskSchedule)
 
         await Schedule.update(taskSchedule, {
           where: {

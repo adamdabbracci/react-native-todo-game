@@ -27,9 +27,9 @@ CREATE TABLE `Task` (
     `schedule_id` int  NOT NULL ,
     `assigned_to` VARCHAR(255)  NOT NULL ,
     `status` VARCHAR(255)  NOT NULL ,
-    `assigned_at` Date  NOT NULL ,
+    `assigned_date` Date  NOT NULL ,
     `completed_at` Date  NOT NULL ,
-     `created_at` DATE,
+    `created_at` DATE,
     `updated_at` DATE,
     PRIMARY KEY (
         `id`

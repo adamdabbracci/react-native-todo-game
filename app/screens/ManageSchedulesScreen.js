@@ -120,7 +120,7 @@ export default function ManageSchedulesScreen(props) {
                     taskSchedules.map((schedule, i) => (
                         <ListItem
                             key={i}
-                            title={schedule.task.name}
+                            title={schedule.name}
                             subtitle={schedule.frequency}
                             bottomDivider
                             onPress={() => {

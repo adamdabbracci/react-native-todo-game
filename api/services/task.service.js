@@ -1,50 +1,30 @@
 const dynamodb = require('../functions/dynamodb');
 const moment = require('moment');
 const uuid = require('uuid');
+const { Task } = require('./database.service');
 
 module.exports = class TaskService {
     getTask = async (taskId) => {
-        const params = {
-          TableName: process.env.TASKS_TABLE,
-          Key: {
-            id: taskId,
-          },
-        };
-      
-        // fetch task from the database
-        const results = await dynamodb.get(params).promise();
-        return results.Item;
+        return Task.findByPk(taskId)
       }
 
       getAllTasksByDate = async (userId, date) => {
-        const params = {
-          TableName: process.env.TASKS_TABLE,
-         
-           FilterExpression: "assigned_to = :userId AND (assigned_date = :assigned_date OR attribute_not_exists(assigned_date) )", 
-           ExpressionAttributeValues: {
-            ':userId': userId,
-            ':assigned_date': moment(date).format("MM-DD-YYYY"),
-           }, 
-        };
-
-        console.log(params)
-
-        const results = await dynamodb.scan(params).promise();
-        return results.Items;
+        return Task.findAll({
+          where: {
+            assigned_to: userId,
+            assigned_date: moment(date).utc().startOf("day").toDate()
+          }
+        })
       }
 
       getTasksBySchedule = async (scheduleId) => {
-        const params = {
-          TableName: process.env.TASKS_TABLE,
-         
-           FilterExpression: "schedule_id = :scheduleId", 
-           ExpressionAttributeValues: {
-            ':scheduleId': scheduleId,
-           }, 
-        };
-        const results = await dynamodb.scan(params).promise();
-        return results.Items;
+        return Task.findAll({
+          where: {
+            schedule_id: scheduleId,
+          }
+        })
       }
+      
 
       createTask = async (task) => {
         const timestamp = new Date().getTime();
@@ -69,6 +49,10 @@ module.exports = class TaskService {
         // write the task to the database
         const results = await dynamodb.put(params).promise();
         return results.Attributes;
+      }
+
+      updateTask = async (task) => {
+        return Task.update(task)
       }
 
       deleteTask = async (taskId) => {

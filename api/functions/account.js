@@ -15,3 +15,14 @@ module.exports.getAccount = async (event, context) => {
     body: JSON.stringify(account)
   }
 };
+
+module.exports.getBank = async (event, context) => {
+  const userId = event.requestContext.authorizer.claims.sub;
+
+  // fetch task from the database
+  const account = await userService.getBank(userId);
+  return {
+    statusCode: 200,
+    body: JSON.stringify(account)
+  }
+};

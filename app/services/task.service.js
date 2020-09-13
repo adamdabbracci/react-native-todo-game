@@ -68,9 +68,9 @@ export default class TaskService {
       });
   }
 
-  getTasksCreatedBySchedule = async (scheduleId) => {
+  getSchedule = async (scheduleId) => {
     console.log(`Getting tasks for schedule ${scheduleId}`)
-    return fetch(`${apiPath}/schedules/${scheduleId}/tasks`, {
+    return fetch(`${apiPath}/schedules/${scheduleId}`, {
       headers: await this.getHeaders(),
     })
     .then((response) => response.json())
@@ -91,6 +91,7 @@ export default class TaskService {
         console.log(error);
       });
   }
+
 
   updateTaskSchedule = async (taskSchedule) => {    
     return fetch(`${apiPath}/schedules/${taskSchedule.id}`, {

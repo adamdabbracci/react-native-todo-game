@@ -1,11 +1,8 @@
 'use strict';
 
-const dynamodb = require('./dynamodb');
 const TaskScheduleService = require('../services/taskschedule.service');
-const TaskService = require('../services/task.service');
 
 const taskScheduleService = new TaskScheduleService();
-const taskService = new TaskService();
 
 module.exports.create = async (event, context) => {
   const createdBy = event.requestContext.authorizer.claims.sub;
@@ -15,10 +12,11 @@ module.exports.create = async (event, context) => {
   // fetch task from the database
   const scheduled = await taskScheduleService.createTaskSchedule(body);
   return {
-    statusCode: 200,
+    statusCode: 201,
     body: JSON.stringify(scheduled)
   }
 };
+
 
 module.exports.update = async (event, context) => {
   const createdBy = event.requestContext.authorizer.claims.sub;
@@ -31,7 +29,7 @@ module.exports.update = async (event, context) => {
   // fetch task from the database
   const scheduled = await taskScheduleService.updateTaskSchedule(id, body);
   return {
-    statusCode: 200,
+    statusCode: 204,
     body: JSON.stringify(scheduled)
   }
 };
@@ -47,11 +45,11 @@ module.exports.list = async (event, context) => {
   
 };
 
-module.exports.listTasksFromSchedule = async (event, context) => {
+module.exports.get = async (event, context) => {
   const userId = event.requestContext.authorizer.claims.sub;
   const scheduleId = event.pathParameters.id;
 
-  const tasks = await taskService.getTasksBySchedule(scheduleId);
+  const tasks = await taskScheduleService.getTaskSchedule(scheduleId);
     return {
       statusCode: 200,
       body: JSON.stringify(tasks)

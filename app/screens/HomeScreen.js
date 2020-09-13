@@ -24,7 +24,9 @@ const currentUserService = new CurrentUserService();
 
 export default function HomeScreen({navigation}) {
   const [tasks, setTasks] = React.useState([]);
-  const [bank, setBank] = React.useState(new Bank());
+  const [bank, setBank] = React.useState({
+    coins: 0,
+  });
   const [hasFetched, setHasFetch] = React.useState(false);
   const [taskDetail, setTaskDetail] = React.useState({
     showTaskDetail: false,
@@ -34,11 +36,11 @@ export default function HomeScreen({navigation}) {
   const [refreshing, setRefreshing] = React.useState(false);
 
   async function fetchBank() {
-    currentUserService.getAccount()
+    currentUserService.getBank()
     .then((account) => {
+      console.log(account)
       setBank({
         coins: account.coins,
-        tickets: account.tickets,
       });
     })
     .catch((ex) =>{
@@ -161,7 +163,7 @@ export default function HomeScreen({navigation}) {
               title={l.name}
               subtitle={l.description}
               onPress={() => {
-                if (l.completed) {
+                if (l.status === "Complete") {
                   alert("You've already completed this task!")
                 }
                 else {
@@ -183,7 +185,7 @@ export default function HomeScreen({navigation}) {
                 fontWeight: "bold"
               }}
               rightElement={() => {
-                if (l.completed) {
+                if (l.status === "Complete") {
                   return (
                     <View>
                       <Icon name="award" type="font-awesome-5" color="white"></Icon>

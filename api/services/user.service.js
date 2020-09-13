@@ -24,6 +24,12 @@ module.exports = class UserService {
         console.log(user)
         return User.create(user);
     }
+
+    getBank = async (userId) => {
+      return User.findByPk(userId, {
+        attributes: ["coins"],
+      })
+    }
     getUser = async (userId) => {
       try {
         const user =  await User.findOne({

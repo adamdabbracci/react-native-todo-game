@@ -1,8 +1,11 @@
 'use strict';
 
 const dynamodb = require('../dynamodb');
+const moment = require('moment');
+
 const UserService = require("../../services/user.service");
 const TaskService = require("../../services/task.service");
+const { User } = require('../../services/database.service');
 
 const userService = new UserService();
 const taskService = new TaskService();
@@ -67,55 +70,38 @@ module.exports.update = (event, context, callback) => {
 module.exports.complete = async (event, context) => {
   const userId = event.requestContext.authorizer.claims.sub;
 
-  const timestamp = new Date().getTime();
   const data = JSON.parse(event.body);
 
 
   // Load the details of the task
   const existingTask = await taskService.getTask(event.pathParameters.id);
 
-  const params = {
-    TableName: process.env.TASKS_TABLE,
-    Key: {
-      id: event.pathParameters.id,
-    },
-    // ExpressionAttributeNames: {
-    //   '#task_text': 'text',
-    // },
-    ExpressionAttributeValues: {
-      ':completed': true,
-      ':updated_at': timestamp,
-    },
-    UpdateExpression: 'SET completed = :completed, updated_at = :updated_at',
-    ReturnValues: 'ALL_NEW',
-  };
-
-  // update the task in the database
-  const updated = await dynamodb.update(params).promise();
-
-  console.log(`UPDATED TASK ${event.pathParameters.id}`);
-
-  // update the users bank
-  const user =  await userService.getUser(userId);
-  if (user) {
-    console.log(`RETRIEVED USER ${userId}`);
-    console.log(user)
-    
-    user.coins += parseInt(existingTask["coin_reward"]);
-
-    await userService.updateUser(user);
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(updated.Attributes)
-    }
-  }
-  else {
+  if (!existingTask) {
     return {
       statusCode: 404,
       body: JSON.stringify({
-        message: "No account found matching target user.",
+        message: "Invalid ID"
       })
     }
+  }
+
+  existingTask.status = "Complete";
+  existingTask.completed_at = moment().utc().startOf("day").toDate();
+  const saved = await existingTask.save();
+
+  console.log(`UPDATED TASK ${event.pathParameters.id}`);
+  
+  const user = await User.findByPk(userId)
+  await User.update({
+    coins: user.coins + existingTask.coin_reward
+  }, {
+    where: {
+      id: userId,
+    }
+  })
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify(saved)
   }
 }
