@@ -128,13 +128,13 @@ functions:
           method: get
           cors: true
   # /users
-  getAssignableUsers:
-    handler: functions/users.getAssignableUsers
+  searchUsers:
+    handler: functions/users.searchByUsername
     events:
       - http:
           path: users
           method: get
-          cors: true
+          cors: true  
 
   # account
   getAccount:
@@ -150,8 +150,29 @@ functions:
       - http:
           path: account/bank
           method: get
-          cors: true
+          cors: true       
 
+  getSponsorships:
+    handler: functions/account.getSponsorships
+    events:
+      - http:
+          path: account/sponsorships
+          method: get
+          cors: true
+  requestSponsorship:
+    handler: functions/account.requestSponsorship
+    events:
+      - http:
+          path: account/sponsorships
+          method: post
+          cors: true
+  getAssignableUsers:
+    handler: functions/account.getAssignableUsers
+    events:
+      - http:
+          path: account/sponsees
+          method: get
+          cors: true
 
   # task scheduler (runs every hour)
   scheduleTodaysTasks:

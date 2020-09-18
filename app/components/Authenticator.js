@@ -40,7 +40,8 @@ class CustomSignIn extends SignIn {
       return (
         <View style={{
           width: "100%",
-          padding: 10
+          padding: 10,
+          top: -100
         }}>
             {error && (
                 <Text style={{

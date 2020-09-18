@@ -64,6 +64,8 @@ export default function BottomTabNavigator({ navigation, route }) {
           title: 'Account',
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-log-in" />,
         }}
+
+        
       />
     </BottomTab.Navigator>
   );

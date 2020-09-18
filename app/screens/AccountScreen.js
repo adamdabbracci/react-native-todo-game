@@ -1,23 +1,33 @@
 import * as React from 'react';
 import { View, Text } from 'react-native';
 import * as styles from '../styles'
-import { Button, Icon, withTheme } from 'react-native-elements';
+import { Button, Icon, withTheme, Input } from 'react-native-elements';
 import CurrentUserService from '../services/currentuser.service';
+import UserService from '../services/user.service';
 import PushService from '../services/push.service';
 import TaskService from '../services/task.service';
 
 const currentUserService = new CurrentUserService();
+const userService = new UserService();
 const pushService = new PushService();
 
 export default function AccountScreen(props) {
 
     const [user, setUser] = React.useState(null);
 
-    
+    searchByUsername = async (username) => {
+        return userService.searchUsersByUsername("user")
+        .then((results) => {
+            console.log(results)
+        })
+        .catch((ex) => {
+            console.log("Failed to search for user")
+            console.log(ex)
+        })
+    }
    
     renderUserDetails = () => {
         if (user) {
-            console.log("Found user.")
             return (
                 <View>
                     <Text style={{
@@ -80,7 +90,6 @@ export default function AccountScreen(props) {
         )
     }
 
-    console.log(renderUserDetails)
 
     return (
         <View style={{
@@ -96,6 +105,15 @@ export default function AccountScreen(props) {
            <View style={{
                marginTop: 20
            }}>
+
+<Input
+          onChangeText={value => {
+              searchByUsername(value)
+          }}
+          placeholder='Find a user by username'
+          />
+
+
            {renderAccountButton()}
 
            </View>

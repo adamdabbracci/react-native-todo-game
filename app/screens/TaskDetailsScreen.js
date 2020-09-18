@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import * as styles from '../styles'
 import { Button, Icon } from 'react-native-elements';
 import CurrentUserService from '../services/currentuser.service';
@@ -25,6 +25,11 @@ export default function TaskDetailsScreen(props) {
         <View style={{
             
         }}>
+            {/* <Image
+                height={30}
+                width={30}
+                source={require('../assets/images/star.png')}
+            /> */}
             <Text style={{
                 fontWeight: "bold",
                 fontSize: 20,

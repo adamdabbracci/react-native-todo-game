@@ -41,3 +41,5 @@ https://docs.expo.io
 ## API Functions
 #### Run the task scheduler
  sls invoke local -f scheduleTodaysTasks
+ #### Sync DB
+ sls invoke local -f syncDatabase

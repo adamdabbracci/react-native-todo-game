@@ -10,6 +10,7 @@ const sequelize = new Sequelize('lvlup', 'admin', 'kasjdhfkjahsdlkfjahsdfjwahbjk
 class User extends Model { }
 class Task extends Model { }
 class Schedule extends Model { }
+class Sponsorship extends Model { }
 
 
 User.init({
@@ -18,19 +19,32 @@ User.init({
     primaryKey: true,
   },
   name: DataTypes.STRING,
+  username: DataTypes.STRING,
   email_address: DataTypes.STRING,
   coins: DataTypes.INTEGER
 }, {
-  sequelize, modelName: 'user', tableName: 'User', lowercased: true, underscored: true, defaultScope: {
-    include: [Task,
-      // {
-      //   model: Schedule,
-      //   as: "created_schedules"
-      // },
-      // {
-      //   model: Schedule,
-      //   as: "schedules"
-      // }
+  sequelize, modelName: 'user', tableName: 'User', lowercased: true, underscored: true
+});
+
+Sponsorship.init({
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV1,
+    primaryKey: true,
+  },
+  sponsor_id: DataTypes.UUID,
+  sponsee_id: DataTypes.UUID
+}, {
+  sequelize, modelName: 'sponsorship', tableName: 'Sponsorship', lowercased: true, underscored: true, defaultScope: {
+    include: [
+      {
+        model: User,
+        as: "sponsor"
+      },
+      {
+        model: User,
+        as: "sponsee"
+      }
     ]
   }
 });
@@ -119,6 +133,27 @@ Schedule.hasMany(Task, {
 
 Task.belongsTo(Schedule)
 
+User.belongsToMany(User, {
+  as: "sponsors",
+  through: "UserSponsors"
+})
+
+User.belongsToMany(User, {
+  as: "sponsees",
+  through: "UserSponsors"
+})
+
+Sponsorship.belongsTo(User, {
+  as: "sponsor",
+  foreignKey: "sponsor_id"
+})
+
+
+Sponsorship.belongsTo(User, {
+  as: "sponsee",
+  foreignKey: "sponsee_id"
+})
+
 
 // Task.belongsTo(User, {
 //     foreignKey: "assigned_to"
@@ -129,7 +164,7 @@ const { Op } = require("sequelize");
 const syncDb = async () => {
   await init()
   await sequelize.sync({ force: true });
-  return
+  return;
 }
 
 module.exports = {
@@ -137,6 +172,7 @@ module.exports = {
   User,
   Task,
   Schedule,
+  Sponsorship,
   syncDb,
 }
 const init = async () => {
