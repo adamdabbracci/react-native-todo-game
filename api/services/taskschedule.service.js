@@ -1,6 +1,6 @@
 const moment = require("moment");
 const rrule = require("rrule");
-const { Op, Schedule, Task } = require("./database.service");
+const { Op, Schedule, Task, User } = require("./database.service");
 
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -11,7 +11,7 @@ async function asyncForEach(array, callback) {
 module.exports = class TaskScheduleService {
     getTaskSchedule = async (id) => {
         return Schedule.findByPk(id, {
-          include: [Task]
+          include: [Task, User]
         })
       }
 
@@ -67,7 +67,11 @@ module.exports = class TaskScheduleService {
         return Schedule.findAll({
           where: {
             created_by: userId
-          }
+          },
+          include: [
+            Task,
+            User,
+          ]
         })
       }
 

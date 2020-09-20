@@ -29,6 +29,34 @@ export default class CurrentUserService {
             console.log(error);
           });
     }
+    getSponsorships = async () => {
+      return fetch(`${apiPath}/account/sponsorships`, {
+          headers: await this.getHeaders(),
+        })
+        .then((response) => response.json())
+        .catch((error) => {
+            console.log("Failed to get sponsorships:")
+          console.log(error);
+        });
+  }
+
+  requestSponsor = async (sponsorId) => {
+    console.log(JSON.stringify({
+      sponsor_id: sponsorId,
+    }))
+    return fetch(`${apiPath}/account/sponsorships`, {
+        headers: await this.getHeaders(),
+        method: "POST",
+        body: JSON.stringify({
+          sponsor_id: sponsorId,
+        })
+      })
+      .then((response) => response.json())
+      .catch((error) => {
+          console.log("Failed to request sponsorships:")
+        console.log(error);
+      });
+}
 
     getBank = async () => {
         return fetch(`${apiPath}/account/bank`, {

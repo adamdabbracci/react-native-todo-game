@@ -135,6 +135,13 @@ functions:
           path: users
           method: get
           cors: true  
+  getUser:
+    handler: functions/users.getUser
+    events:
+      - http:
+          path: users/{id}
+          method: get
+          cors: true  
 
   # account
   getAccount:

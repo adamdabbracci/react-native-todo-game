@@ -1,6 +1,7 @@
 
 const { User, Sponsorship, Task, Op } = require('./database.service')
 
+
 module.exports = class UserService {
     searchUsersByUsername = async (username) => {
         return User.findAll({
@@ -10,6 +11,12 @@ module.exports = class UserService {
                 }
             },
             limit: 20,
+        })
+    }
+
+    getUser = async (userId) => {
+        return User.findByPk(userId, {
+            attributes: ['id', 'name', 'username']
         })
     }
 }

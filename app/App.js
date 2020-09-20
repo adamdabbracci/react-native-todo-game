@@ -14,7 +14,7 @@ import awsconfig from './aws-exports';
 import * as Notifications from 'expo-notifications';
 import * as Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
-import { CustomSignIn } from './components/Authenticator';
+import { CustomSignIn, CustomSignUp } from './components/Authenticator';
 
 Amplify.configure({
   ...awsconfig,
@@ -163,17 +163,16 @@ const styles = StyleSheet.create({
 
 
 
-export default withAuthenticator(App, false, [
-  <CustomSignIn onLoggedIn={() => {
-    console.log("Logged in successfully. Redirecting to confirm sign in.")
+// export default withAuthenticator(App, false, [
+//   <CustomSignIn onLoggedIn={() => {
+//     console.log("Logged in successfully. Redirecting to confirm sign in.")
+//   }} />,
+//   <ConfirmSignIn />,
+//   <VerifyContact />,
+//   <CustomSignUp />,
+//   <ConfirmSignUp />,
+//   <ForgotPassword />,
+//   <RequireNewPassword />
+// ]);
 
-  }} />,
-  <ConfirmSignIn />,
-  <VerifyContact />,
-  <SignUp />,
-  <ConfirmSignUp />,
-  <ForgotPassword />,
-  <RequireNewPassword />
-]);
-
-// export default withAuthenticator(App);
+export default withAuthenticator(App);

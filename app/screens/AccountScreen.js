@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
-import * as styles from '../styles'
-import { Button, Icon, withTheme, Input } from 'react-native-elements';
+import { View, Text, VirtualizedList } from 'react-native';
+import { Button, Icon, withTheme, Input, ListItem, Overlay } from 'react-native-elements';
 import CurrentUserService from '../services/currentuser.service';
 import UserService from '../services/user.service';
 import PushService from '../services/push.service';
-import TaskService from '../services/task.service';
+import styles from '../styles'
 
 const currentUserService = new CurrentUserService();
 const userService = new UserService();
@@ -14,64 +13,99 @@ const pushService = new PushService();
 export default function AccountScreen(props) {
 
     const [user, setUser] = React.useState(null);
+    const [showRequestSponsorOverlay, setShowRequestSponsorOverlay] = React.useState(false);
+    const [sponsees, setSponsees] = React.useState(null);
+    const [sponsors, setSponsors] = React.useState(null);
+    const [userSearchResults, setUserSearchResults] = React.useState([]);
+
+    React.useEffect(() => {
+        getAccountDetails()
+    }, [])
+
+    const getAccountDetails = async () => {
+        setUser(await currentUserService.getAccount())
+        
+        currentUserService.getSponsorships()
+        .then((sponsorships) => {
+            setSponsees(sponsorships.sponsees)
+            setSponsors(sponsorships.sponsors)
+        })
+    }
 
     searchByUsername = async (username) => {
-        return userService.searchUsersByUsername("user")
+        return userService.searchUsersByUsername(username)
+            .then((results) => {
+                setUserSearchResults(results)
+            })
+            .catch((ex) => {
+                console.log("Failed to search for user")
+                console.log(ex)
+            })
+    }
+
+    const requestSponsor = async (sponsorId) => {
+        return currentUserService.requestSponsor(sponsorId)
         .then((results) => {
-            console.log(results)
+            setShowRequestSponsorOverlay(false)
+            getAccountDetails()
         })
         .catch((ex) => {
             console.log("Failed to search for user")
             console.log(ex)
         })
     }
-   
+
     renderUserDetails = () => {
         if (user) {
             return (
                 <View>
                     <Text style={{
-                    color: "white",
-                    fontSize: 20,
-                    fontWeight: "500",
-                    textAlign: "center"
-                }}>
-                                        User ID
+                        ...styles.gold,
+                        ...styles.titleText,
+                        marginBottom: 20,
+                    }}>
+                        @{user.username}
+                    </Text>
 
-                </Text>
-                <Text style={{
-                    color: "white",
-                    fontSize: 20,
-                    fontWeight: "900",
-                    textAlign: "center"
-                }}>
-                    {user.id}
-                </Text>
+
+                    <ListItem
+                        key={1}
+                        title={'Email Address'}
+                        subtitle={user.email_address}
+                        bottomDivider
+                        style={{
+                            ...styles.gold
+                        }}
+                    // onPress={() => {
+                    //     props.navigation.navigate('ScheduleDetailsScreen', {
+                    //         schedule: schedule
+                    //     })
+                    // }}
+                    />
+                    
                 </View>
             )
         }
         else {
-            currentUserService.getAccount()
-            .then((details) => {
-                setUser(details)
-            })
-        
             return (
                 <Text>No user!</Text>
             )
         }
     }
 
-    renderAccountButton = () => {
+    const renderAccountButton = () => {
 
 
         return (
-           
+
+            <View style={{
+                marginTop: 20,
+            }}>
                 <Button
                 title="Log Out"
                 type="solid"
                 raised={true}
-                
+
                 buttonStyle={{
                     backgroundColor: "gold",
                     borderColor: "white",
@@ -82,42 +116,161 @@ export default function AccountScreen(props) {
                     color: "white",
                     fontWeight: "700"
                 }}
+                style={{
+                }}
 
                 onPress={() => {
                     currentUserService.logout();
                 }}
             />
+            </View>
+        )
+    }
+    
+
+    const renderAddSponsorOverlay = () => {
+        return (
+            <Overlay overlayStyle={{
+                width: '90%',
+                minHeight: '50%'
+            }} isVisible={showRequestSponsorOverlay} onBackdropPress={() =>{
+                setShowRequestSponsorOverlay(false)
+            }}>
+                <View>
+                <Text style={{
+                    ...styles.titleText
+                }}>
+                    Ask someone to be your sponsor
+                </Text>
+                 <Input
+                    onChangeText={value => {
+                        searchByUsername(value)
+                    }}
+                    placeholder='Find a user by username'
+                />
+
+                {
+                            userSearchResults.map((r) => {
+                                return (
+                                    <ListItem
+                                        key={r.id}
+                                        title={r.username}
+                                        subtitle={r.email_address}
+                                        bottomDivider
+                                        onPress={() => {
+                                           requestSponsor(r.id) 
+                                        }}
+                                        />
+                                )
+                            })
+                        }
+                </View>
+      </Overlay>
         )
     }
 
+    const renderSponsorshipSection = () => {
+
+        if (!sponsors || !sponsees) {
+            return (
+                <View>
+                    <Text>Loading...</Text>
+                </View>
+            )
+        }
+        return (
+            <View>
+                <View>
+                        <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+                            <Text style={{
+                                ...styles.gold,
+                                ...styles.titleText,
+                                marginTop: 20,
+                            }}>
+                                Your Sponsors
+                                
+                            </Text>
+                            <Icon                              
+                                name='plus-circle'
+                                type="font-awesome"
+                                color="white"
+                                style={{
+                                    marginTop: 20,
+                                }}
+                                onPress={() => {
+                                   setShowRequestSponsorOverlay(true) 
+                                }}
+                                /> 
+                        </View>
+                        {
+                            sponsors.map((sponsor) => {
+                                return (
+                                    <ListItem
+                                key={sponsor.id}
+                                title={sponsor.username}
+                                subtitle={sponsor.email_address}
+                                bottomDivider
+                                style={{
+                                    ...styles.gold
+                                }} />
+                                )
+                            })
+                        }
+                    </View>
+
+                    <View >
+                        <Text style={{
+                            ...styles.gold,
+                            ...styles.titleText,
+                            textAlign: "left",
+                            marginTop: 20,
+                        }}>
+                            Your Sponsees
+                        </Text>
+                        
+                        {
+                            sponsees.map((sponsee) => {
+                                return (
+                                    <ListItem
+                                key={sponsee.id}
+                                title={sponsee.username}
+                                subtitle={sponsee.email_address}
+                                bottomDivider
+                                style={{
+                                    ...styles.gold
+                                }} />
+                                )
+                            })
+                        }
+                    </View>
+            </View>
+                    
+        )
+    }
 
     return (
         <View style={{
-            marginTop: 40,
             padding: 20,
             flexDirection: "column",
         }}>
 
-               
+            {renderAddSponsorOverlay()}
 
             {renderUserDetails()}
-           
-           <View style={{
-               marginTop: 20
-           }}>
 
-<Input
-          onChangeText={value => {
-              searchByUsername(value)
-          }}
-          placeholder='Find a user by username'
-          />
+            {renderAccountButton()}
 
 
-           {renderAccountButton()}
+            <View style={{
+                marginTop: 20
+            }}>
 
-           </View>
-           
+               {renderSponsorshipSection()}
+
+                
+
+            </View>
+
         </View>
     )
 }

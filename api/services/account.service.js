@@ -18,7 +18,7 @@ module.exports = class AccountService {
         const user = {
           id: cognitoUser.UserAttributes.find(x => x.Name === 'sub').Value,
           email_address: cognitoUser.UserAttributes.find(x => x.Name === 'email').Value,
-          username: `user_${generateWords(2)[0]}`,
+          username: cognitoUser.UserAttributes.find(x => x.Name === 'email').Value,
           coins: 0,
         }
         console.log("CREATING USER:")
@@ -27,13 +27,19 @@ module.exports = class AccountService {
     }
 
     getBank = async (userId) => {
-      return User.findByPk(userId, {
+      const user = await User.findByPk(userId, {
         attributes: ["coins"],
       })
+      if (!user) {
+        return this.createUser(userId)
+      }
+      else {
+        return user
+      }
     }
 
     getSponsorships = async (userId) => {
-      return Sponsorship.findAll({
+      const sponsorships =  await Sponsorship.findAll({
         where: {
           [Op.or]: [
             { sponsee_id: userId },
@@ -41,13 +47,38 @@ module.exports = class AccountService {
           ]
         }
       })
+
+      // We have to sort of reverse the logic. If User A sponsors User B,
+      // any rows that have User A as the sponsor need to return under "sponsees",
+      // because User A will want to see the sponsee on that row
+      const result = {
+        sponsors: sponsorships.filter(x => x.sponsee_id === userId).map(x => x.sponsor),
+        sponsees: sponsorships.filter(x => x.sponsor_id === userId).map(x => x.sponsee),
+      }
+
+      return result;
     }
 
     requestSponsorship = async (sponseeId, sponsorId) => {
-      return Sponsorship.create({
+      const existingSponsorship = await Sponsorship.findOne({
+        where: {
+          sponsee_id: sponseeId,
+          sponsor_id: sponsorId,
+        }
+      })
+
+      if (existingSponsorship) {
+        console.log(`Existing sponsorship found between SPONSEE: ${sponseeId} and SPONSOR: ${sponsorId}`)
+        return existingSponsorship
+      }
+
+      const created = await Sponsorship.create({
         sponsee_id: sponseeId,
         sponsor_id: sponsorId,
       })
+      console.log(`Created new sponsorship between SPONSEE: ${sponseeId} and SPONSOR: ${sponsorId}`)
+
+      return created;
     }
 
     getAssignableUsers = async (userId) => {
@@ -61,7 +92,7 @@ module.exports = class AccountService {
       
     }
 
-    getUser = async (userId) => {
+    getAccount = async (userId) => {
       try {
         const user =  await User.findOne({
           where: {

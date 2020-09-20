@@ -4,8 +4,10 @@ import { View, Text, ScrollView, RefreshControl, Switch} from 'react-native';
 import * as styles from '../styles'
 import { Button, Icon, withTheme, ListItem, Overlay } from 'react-native-elements';
 import TaskService from '../services/task.service';
+import UserService from '../services/user.service';
 
 const taskService = new TaskService();
+const userService = new UserService();
 
 export default function ScheduleDetailsScreen(props) {
     
@@ -13,17 +15,16 @@ export default function ScheduleDetailsScreen(props) {
     const [tasks, setTasks] = React.useState([]);
 
     React.useEffect(() => {
-        let isSub = true;
-        if (isSub) {
+        if (!props.route.params.schedule) {
             loadScheduleDetails()
         }
-        return () => isSub = false;
-    }, [true])
+    }, [])
 
     const loadScheduleDetails = () => {
 
         return taskService.getSchedule(schedule.id)
-        .then((schedule) => {
+        .then(async (schedule) => {
+            console.log(schedule)
             setSchedule(schedule)
             setTasks(schedule.tasks);
         })
@@ -58,7 +59,7 @@ export default function ScheduleDetailsScreen(props) {
                         fontSize: 12,
                         fontWeight: "500",
                     }}>
-                        {schedule.assigned_to}
+                        Assigned to @{schedule.user.username}
                         </Text>
 
                         <Text style={{
@@ -130,17 +131,17 @@ export default function ScheduleDetailsScreen(props) {
                         Previous Assigments
                     </Text>
 {
-                    tasks.map((task, i) => (
+                    schedule.tasks.map((task, i) => (
                         <ListItem
                             key={i}
                             checkmark={task.completed}
-                            title={moment(task.created_at).format("l")}
+                            title={moment(task.created_at).format("LL")}
                             bottomDivider
-                            onPress={() => {
-                                props.navigation.navigate('ManageTaskScreen', {
-                                    schedule: schedule
-                                })
-                            }}
+                            // onPress={() => {
+                            //     props.navigation.navigate('ManageTaskScreen', {
+                            //         schedule: schedule
+                            //     })
+                            // }}
                         />
                     ))
                 }

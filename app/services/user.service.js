@@ -26,4 +26,16 @@ export default class UserService {
           console.log(error);
         });
     }
+
+    getUser = async (userId) => {    
+        return fetch(`${apiPath}/users/${userId}`, {
+            method: 'GET',
+            headers: await this.getHeaders(),
+          })
+          
+        .then((response) => response.json())
+        .catch((error) => {
+          console.log(error);
+        });
+    }
 }

@@ -41,7 +41,8 @@ export default function ManageTasksScreens({navigation}) {
                 },
                 headerStyle: {
                     backgroundColor: "white"
-                }
+                },
+                title: "Edit Schedule"
             }}/>
        </ManageTaskScreenStack.Navigator>
     );

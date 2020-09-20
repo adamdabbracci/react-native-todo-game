@@ -131,6 +131,10 @@ Schedule.hasMany(Task, {
   foreignKey: "schedule_id"
 })
 
+Schedule.belongsTo(User, {
+  foreignKey: "assigned_to"
+})
+
 Task.belongsTo(Schedule)
 
 User.belongsToMany(User, {

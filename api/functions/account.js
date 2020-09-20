@@ -9,7 +9,7 @@ module.exports.getAccount = async (event, context) => {
   const userId = event.requestContext.authorizer.claims.sub;
 
   // fetch task from the database
-  const account = await accountService.getUser(userId);
+  const account = await accountService.getAccount(userId);
   return {
     statusCode: 200,
     body: JSON.stringify(account)
@@ -37,16 +37,14 @@ module.exports.getSponsorships = async (event, context) => {
 
   return {
     statusCode: 200,
-    body: JSON.stringify({
-      sponsors: sponsorships.filter(x => x.sponsor_id === userId),
-      sponsees: sponsorships.filter(x => x.sponsee_id === userId),
-    })
+    body: JSON.stringify(sponsorships)
   }
 };
 
 
 module.exports.requestSponsorship = async (event, context) => {
   const userId = event.requestContext.authorizer.claims.sub;
+  console.log(event.body)
   const sponsorId = JSON.parse(event.body).sponsor_id;
 
   // fetch task from the database
