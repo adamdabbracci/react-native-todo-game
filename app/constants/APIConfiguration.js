@@ -4,7 +4,7 @@ export class APIConfiguration {
             return "https://9ce610ba815e.ngrok.io";
         }
         else {
-            return "https://prod.myap.com";
+            return "https://8fwa5km7wf.execute-api.us-east-1.amazonaws.com";
         }
     }
 }
