@@ -73,7 +73,7 @@ function App(props) {
     loadResourcesAndDataAsync();
   }, []);
 
-  registerForPushNotificationsAsync = async () => {
+  const registerForPushNotificationsAsync = async () => {
     let token;
     if (Constants.default.isDevice) {
       const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
