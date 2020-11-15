@@ -2,11 +2,12 @@
 
 const dynamodb = require('./dynamodb');
 const AccountService = require('../services/account.service');
+const getUserId = require('../security/middleware').getUserId;
 
 const accountService = new AccountService();
 
 module.exports.getAccount = async (event, context) => {
-  const userId = event.requestContext.authorizer.claims.sub;
+  const userId = getUserId(event);
 
   // fetch task from the database
   const account = await accountService.getAccount(userId);
@@ -17,7 +18,7 @@ module.exports.getAccount = async (event, context) => {
 };
 
 module.exports.getBank = async (event, context) => {
-  const userId = event.requestContext.authorizer.claims.sub;
+  const userId = getUserId(event);
 
   // fetch task from the database
   const account = await accountService.getBank(userId);
@@ -30,7 +31,7 @@ module.exports.getBank = async (event, context) => {
 
 
 module.exports.getSponsorships = async (event, context) => {
-  const userId = event.requestContext.authorizer.claims.sub;
+  const userId = getUserId(event);
 
   // fetch task from the database
   const sponsorships = await accountService.getSponsorships(userId);
@@ -43,7 +44,7 @@ module.exports.getSponsorships = async (event, context) => {
 
 
 module.exports.requestSponsorship = async (event, context) => {
-  const userId = event.requestContext.authorizer.claims.sub;
+  const userId = getUserId(event);
   console.log(event.body)
   const sponsorId = JSON.parse(event.body).sponsor_id;
 
@@ -56,7 +57,7 @@ module.exports.requestSponsorship = async (event, context) => {
 };
 
 module.exports.getAssignableUsers = async (event, context) => {
-  const userId = event.requestContext.authorizer.claims.sub;
+  const userId = getUserId(event);
 
   // fetch task from the database
   const account = await accountService.getAssignableUsers(userId);

@@ -71,7 +71,11 @@ export default class CurrentUserService {
     getAccessToken = async () => {
         try {
             const session = await Auth.currentSession();
-            accessToken = session.getAccessToken().getJwtToken();
+            accessToken = session.getIdToken().getJwtToken();
+            if (__DEV__) {
+              console.log("ID TOKEN:")
+              console.log(accessToken)
+            }
             return accessToken;
         }
         catch(ex) {

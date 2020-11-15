@@ -25,7 +25,6 @@ export default class TaskService {
 
 
     getAll = async () => {
-        console.log(apiPath)
         return fetch(`${apiPath}/tasks`, {
           headers: await this.getHeaders(),
         })

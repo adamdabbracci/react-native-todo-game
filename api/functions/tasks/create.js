@@ -2,10 +2,11 @@
 
 const TaskService = require('../../services/task.service');
 const taskService = new TaskService();
+const getUserId = require('../../security/middleware').getUserId;
 
 module.exports.create = async (event, context) => {
 
-  const userId = event.requestContext.authorizer.claims.sub;
+  const userId = getUserId(event);
 
 
   const task = JSON.parse(event.body);

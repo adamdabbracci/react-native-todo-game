@@ -6,6 +6,7 @@ const moment = require('moment');
 const UserService = require("../../services/user.service");
 const TaskService = require("../../services/task.service");
 const { User } = require('../../services/database.service');
+const getUserId = require('../../security/middleware').getUserId;
 
 const userService = new UserService();
 const taskService = new TaskService();
@@ -68,7 +69,7 @@ module.exports.update = (event, context, callback) => {
  * Mark as task as complete
  */
 module.exports.complete = async (event, context) => {
-  const userId = event.requestContext.authorizer.claims.sub;
+  const userId = getUserId(event);
 
   const data = JSON.parse(event.body);
 

@@ -28,6 +28,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.companyname.appname"
-    }
+    },
+    "description": "It's like Animal Crossing for real life"
   }
 }

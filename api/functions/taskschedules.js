@@ -1,8 +1,8 @@
 'use strict';
 
 const TaskScheduleService = require('../services/taskschedule.service');
-
 const taskScheduleService = new TaskScheduleService();
+const getUserId = require('../security/middleware').getUserId;
 
 module.exports.create = async (event, context) => {
   const createdBy = event.requestContext.authorizer.claims.sub;
@@ -35,7 +35,7 @@ module.exports.update = async (event, context) => {
 };
 
 module.exports.list = async (event, context) => {
-  const userId = event.requestContext.authorizer.claims.sub;
+  const userId = getUserId(event);
   
   const schedules = await taskScheduleService.getTaskSchedulesByCreator(userId);
     return {
@@ -46,7 +46,7 @@ module.exports.list = async (event, context) => {
 };
 
 module.exports.get = async (event, context) => {
-  const userId = event.requestContext.authorizer.claims.sub;
+  const userId = getUserId(event);
   const scheduleId = event.pathParameters.id;
 
   const tasks = await taskScheduleService.getTaskSchedule(scheduleId);

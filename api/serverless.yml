@@ -25,7 +25,7 @@ provider:
     USERS_TABLE: ${self:service}-users-${opt:stage, self:provider.stage}
     TASK_SCHEDULES_TABLE: ${self:service}-taskschedules-${opt:stage, self:provider.stage}
     COGNITO_POOL_ID: ${self:custom.cognitoPoolId}
-    API_HOST:  http://e28721c126b9.ngrok.io
+    API_HOST:  ${ssm:/gamify-life/${opt:stage, self:provider.stage}/api-host}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -39,8 +39,6 @@ provider:
         - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.TASKS_TABLE}"
         - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.USERS_TABLE}"
         - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.TASK_SCHEDULES_TABLE}"
-  authorizer:
-    arn: ${self:custom.cognitoPoolArn}
 
 functions:
 
@@ -52,6 +50,9 @@ functions:
           path: tasks
           method: post
           cors: true
+          authorizer:
+            arn: ${self:custom.cognitoPoolArn}
+            name: authorizer
 
   list:
     handler: functions/tasks/list.list
@@ -60,6 +61,9 @@ functions:
           path: tasks
           method: get
           cors: true
+          authorizer:
+            arn: ${self:custom.cognitoPoolArn}
+            name: authorizer
 
   get:
     handler: functions/tasks/get.get
@@ -68,6 +72,9 @@ functions:
           path: tasks/{id}
           method: get
           cors: true
+          authorizer:
+            arn: ${self:custom.cognitoPoolArn}
+            name: authorizer
 
   update:
     handler: functions/tasks/update.update
@@ -83,6 +90,9 @@ functions:
           path: tasks/{id}/complete
           method: put
           cors: true
+          authorizer:
+            arn: ${self:custom.cognitoPoolArn}
+            name: authorizer
 
   delete:
     handler: functions/tasks/delete.delete
@@ -91,6 +101,9 @@ functions:
           path: tasks/{id}
           method: delete
           cors: true
+          authorizer:
+            arn: ${self:custom.cognitoPoolArn}
+            name: authorizer
 
 
   # schedules
@@ -101,6 +114,9 @@ functions:
           path: schedules
           method: get
           cors: true
+          authorizer:
+            arn: ${self:custom.cognitoPoolArn}
+            name: authorizer
           query:
             - type
 
@@ -111,6 +127,9 @@ functions:
           path: schedules
           method: post
           cors: true
+          authorizer:
+            arn: ${self:custom.cognitoPoolArn}
+            name: authorizer
 
   updateSchedule:
     handler: functions/taskschedules.update
@@ -119,6 +138,9 @@ functions:
           path: schedules/{id}
           method: post
           cors: true
+          authorizer:
+            arn: ${self:custom.cognitoPoolArn}
+            name: authorizer
 
   getSchedule:
     handler: functions/taskschedules.get
@@ -127,6 +149,9 @@ functions:
           path: schedules/{id}
           method: get
           cors: true
+          authorizer:
+            arn: ${self:custom.cognitoPoolArn}
+            name: authorizer
   # /users
   getUser:
     handler: functions/users.getUser
@@ -134,7 +159,10 @@ functions:
       - http:
           path: users/{id}
           method: get
-          cors: true  
+          cors: true
+          authorizer:
+            arn: ${self:custom.cognitoPoolArn}
+            name: authorizer
           
   searchUsers:
     handler: functions/users.searchByUsername
@@ -142,7 +170,10 @@ functions:
       - http:
           path: users
           method: get
-          cors: true  
+          cors: true
+          authorizer:
+            arn: ${self:custom.cognitoPoolArn}
+            name: authorizer
   
 
   # account
@@ -153,13 +184,20 @@ functions:
           path: account
           method: get
           cors: true
+          authorizer:
+            arn: ${self:custom.cognitoPoolArn}
+            name: authorizer
+            
   getBank:
     handler: functions/account.getBank
     events:
       - http:
           path: account/bank
           method: get
-          cors: true       
+          cors: true
+          authorizer:
+            arn: ${self:custom.cognitoPoolArn}
+            name: authorizer
 
   getSponsorships:
     handler: functions/account.getSponsorships
